@@ -1,0 +1,27 @@
+{
+  "title": "Doctors",
+  "empty": {
+    "title": "No doctors yet",
+    "description": "Click the + button to add your first doctor"
+  },
+  "validation": {
+    "nameRequired": "Doctor name is required",
+    "specialtyRequired": "Specialty field is required",
+    "departmentRequired": "Department selection is required",
+    "emailInvalid": "Please enter a valid email address",
+    "phoneInvalid": "Please enter a valid phone number",
+    "ratingInvalid": "Rating must be between 0 and 5",
+    "experienceInvalid": "Experience years cannot be negative"
+  },
+  "fields": {
+    "name": "Name",
+    "specialty": "Specialty",
+    "department": "Department",
+    "phone": "Phone",
+    "email": "Email",
+    "rating": "Rating",
+    "experienceYears": "Experience Years",
+    "notes": "Notes"
+  }
+}
+

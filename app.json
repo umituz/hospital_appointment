@@ -1,0 +1,95 @@
+{
+  "expo": {
+    "name": "Hospitalointment",
+    "slug": "hospital_appointment",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "scheme": "hospital_appointment",
+    "description": "Manage hospital appointments, track doctors, and organize medical visits",
+    "primaryCategory": "Health & Fitness",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.umituz.hospitalointment",
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "CFBundleAllowMixedLocalizations": true,
+        "CFBundleDevelopmentRegion": "en",
+        "CFBundleLocalizations": [
+          "ar",
+          "bg",
+          "cs",
+          "da",
+          "de",
+          "el",
+          "en",
+          "en-AU",
+          "en-CA",
+          "en-GB",
+          "es",
+          "es-MX",
+          "fi",
+          "fr",
+          "fr-CA",
+          "hi",
+          "hr",
+          "hu",
+          "id",
+          "it",
+          "ja",
+          "ko",
+          "ms",
+          "nb",
+          "nl",
+          "pl",
+          "pt",
+          "pt-BR",
+          "ro",
+          "ru",
+          "sk",
+          "sv",
+          "th",
+          "tl",
+          "tr",
+          "uk",
+          "vi",
+          "zh-Hans",
+          "zh-Hant"
+        ]
+      },
+      "config": {
+        "privacyManifests": {
+          "NSPrivacyTracking": false,
+          "NSPrivacyTrackingDomains": [],
+          "NSPrivacyCollectedDataTypes": [],
+          "NSPrivacyAccessedAPITypes": [
+            {
+              "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+              "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+            }
+          ]
+        }
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": true,
+      "package": "com.umituz.hospitalointment",
+      "versionCode": 1
+    },
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

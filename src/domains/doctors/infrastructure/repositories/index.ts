@@ -1,0 +1,2 @@
+export { DoctorRepository } from './DoctorRepository';
+

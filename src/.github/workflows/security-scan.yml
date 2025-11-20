@@ -1,0 +1,131 @@
+name: Security Vulnerability Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run weekly on Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  osv-scanner:
+    name: OSV-Scanner Vulnerability Detection
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write # For SARIF upload
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run OSV-Scanner
+        uses: google/osv-scanner-action@v1
+        with:
+          scan-args: |-
+            --recursive
+            --format json
+            --output results.json
+            ./
+        continue-on-error: true
+
+      - name: Upload OSV-Scanner Results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: results.json
+          category: osv-scanner
+
+      - name: Display Results Summary
+        if: always()
+        run: |
+          if [ -f results.json ]; then
+            echo "📊 Security Scan Results:"
+            cat results.json | jq -r '.results[] | "\(.source.path): \(.vulnerabilities | length) vulnerabilities"' || echo "No vulnerabilities found ✅"
+          fi
+
+  npm-audit:
+    name: NPM Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: |
+          npm audit --audit-level=moderate --json > audit-results.json || true
+
+      - name: Display Audit Summary
+        if: always()
+        run: |
+          if [ -f audit-results.json ]; then
+            echo "📊 NPM Audit Results:"
+            cat audit-results.json | jq -r '.metadata | "Total: \(.vulnerabilities.total), Critical: \(.vulnerabilities.critical), High: \(.vulnerabilities.high), Moderate: \(.vulnerabilities.moderate), Low: \(.vulnerabilities.low)"'
+          fi
+
+      - name: Upload Audit Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit-results
+          path: audit-results.json
+
+  security-report:
+    name: Generate Security Report
+    needs: [osv-scanner, npm-audit]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Download OSV Results
+        uses: actions/download-artifact@v4
+        with:
+          name: osv-scanner-results
+        continue-on-error: true
+
+      - name: Download NPM Audit Results
+        uses: actions/download-artifact@v4
+        with:
+          name: npm-audit-results
+        continue-on-error: true
+
+      - name: Generate Combined Report
+        run: |
+          echo "# 🔒 Security Scan Report" > security-report.md
+          echo "" >> security-report.md
+          echo "**Date:** $(date)" >> security-report.md
+          echo "**App:** hospital_appointment" >> security-report.md
+          echo "" >> security-report.md
+
+          if [ -f results.json ]; then
+            echo "## OSV-Scanner Results" >> security-report.md
+            echo "\`\`\`json" >> security-report.md
+            cat results.json >> security-report.md
+            echo "\`\`\`" >> security-report.md
+          fi
+
+          if [ -f audit-results.json ]; then
+            echo "## NPM Audit Results" >> security-report.md
+            echo "\`\`\`json" >> security-report.md
+            cat audit-results.json >> security-report.md
+            echo "\`\`\`" >> security-report.md
+          fi
+
+      - name: Upload Security Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-report
+          path: security-report.md

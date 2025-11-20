@@ -1,0 +1,2 @@
+export { HospitalService } from './HospitalService';
+
