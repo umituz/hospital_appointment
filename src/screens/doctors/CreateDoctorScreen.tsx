@@ -72,16 +72,27 @@ export const CreateDoctorScreen: React.FC = () => {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
       >
-        <AtomicCard variant="elevated" padding="lg" style={styles.card}>
+        <View style={styles.header}>
           <AtomicText
-            type="headlineMedium"
+            type="headlineLarge"
             color="textPrimary"
             style={styles.title}
           >
             {t("doctors.create.title") || "Add New Doctor"}
           </AtomicText>
+          <AtomicText
+            type="bodyMedium"
+            color="textSecondary"
+            style={styles.subtitle}
+          >
+            {t("doctors.create.description") ||
+              "Fill in the information below to add a new doctor"}
+          </AtomicText>
+        </View>
 
+        <AtomicCard variant="elevated" padding="lg" style={styles.card}>
           <DoctorFormFields
             formData={formData}
             departments={departments}
@@ -113,11 +124,18 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 100,
   },
-  card: {
-    marginBottom: 16,
+  header: {
+    marginBottom: 24,
+    paddingHorizontal: 4,
   },
   title: {
-    marginBottom: 24,
+    marginBottom: 8,
+  },
+  subtitle: {
+    marginTop: 4,
+  },
+  card: {
+    marginBottom: 16,
   },
 });
 

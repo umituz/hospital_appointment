@@ -1,8 +1,8 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 import {
   AtomicText,
-  AtomicButton,
+  AtomicIcon,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 import {
@@ -12,6 +12,7 @@ import {
 import { useLocalization } from "@umituz/react-native-localization";
 import { DoctorFormData } from "../../types";
 import { Department } from "@/domains/appointments/types";
+import { DepartmentPicker } from "./DepartmentPicker";
 
 interface DoctorFormFieldsProps {
   formData: DoctorFormData;
@@ -61,39 +62,41 @@ export const DoctorFormFields: React.FC<DoctorFormFieldsProps> = ({
         >
           {t("doctors.fields.department")} *
         </AtomicText>
-        <AtomicButton
-          variant="outline"
+        <TouchableOpacity
           onPress={onToggleDepartmentPicker}
-          style={styles.pickerButton}
+          style={[
+            styles.pickerButton,
+            {
+              backgroundColor: tokens.colors.surface,
+              borderColor: tokens.colors.border,
+            },
+          ]}
         >
-          {formData.department_id
-            ? departments.find(
-                (d) => d.id.toString() === formData.department_id,
-              )?.name ||
-              t("doctors.placeholders.selectDepartment") ||
-              "Select Department"
-            : t("doctors.placeholders.selectDepartment") || "Select Department"}
-        </AtomicButton>
-        {showDepartmentPicker && (
-          <View
-            style={[
-              styles.pickerContainer,
-              { borderColor: tokens.colors.border },
-            ]}
+          <AtomicText
+            type="bodyLarge"
+            color={formData.department_id ? "textPrimary" : "textSecondary"}
+            style={styles.pickerText}
           >
-            {departments.map((dept) => (
-              <AtomicButton
-                key={dept.id}
-                variant="text"
-                onPress={() => onSelectDepartment(dept.id.toString())}
-                style={styles.pickerItem}
-              >
-                {dept.name}
-              </AtomicButton>
-            ))}
-          </View>
-        )}
+            {formData.department_id
+              ? departments.find(
+                  (d) => d.id.toString() === formData.department_id,
+                )?.name ||
+                t("doctors.placeholders.selectDepartment") ||
+                "Select Department"
+              : t("doctors.placeholders.selectDepartment") ||
+                "Select Department"}
+          </AtomicText>
+          <AtomicIcon name="ChevronDown" size="md" color="secondary" />
+        </TouchableOpacity>
       </View>
+
+      <DepartmentPicker
+        visible={showDepartmentPicker}
+        departments={departments}
+        selectedDepartmentId={formData.department_id}
+        onSelect={onSelectDepartment}
+        onClose={onToggleDepartmentPicker}
+      />
 
       <AtomicInput
         label={t("doctors.fields.phone")}
@@ -157,21 +160,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   input: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   label: {
     marginBottom: 8,
   },
   pickerButton: {
-    marginTop: 8,
-  },
-  pickerContainer: {
-    marginTop: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 16,
     borderRadius: 8,
     borderWidth: 1,
-    maxHeight: 200,
+    marginTop: 8,
+    minHeight: 56,
   },
-  pickerItem: {
-    borderBottomWidth: 1,
+  pickerText: {
+    flex: 1,
   },
 });
