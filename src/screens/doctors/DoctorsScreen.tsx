@@ -1,10 +1,13 @@
-import React from 'react';
-import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
-import { ScreenLayout, useAppDesignTokens } from '@umituz/react-native-design-system';
-import { useDoctors } from '@/domains/doctors';
-import { DoctorCard } from '@/domains/doctors/presentation/components/DoctorCard';
-import { EmptyState } from '@/components/common/EmptyState';
-import { LoadingState } from '@/components/common/LoadingState';
+import React from "react";
+import { View, FlatList, RefreshControl, StyleSheet } from "react-native";
+import {
+  ScreenLayout,
+  useAppDesignTokens,
+} from "@umituz/react-native-design-system";
+import { useDoctors } from "@/domains/doctors";
+import { DoctorCard } from "@/domains/doctors/presentation/components/DoctorCard";
+import { EmptyState } from "@/components/common/EmptyState";
+import { LoadingState } from "@/components/common/LoadingState";
 
 export const DoctorsScreen: React.FC = () => {
   const tokens = useAppDesignTokens();
@@ -14,13 +17,13 @@ export const DoctorsScreen: React.FC = () => {
     await refetch();
   };
 
-  const renderItem = ({ item }: { item: typeof doctors[0] }) => (
+  const renderItem = ({ item }: { item: (typeof doctors)[0] }) => (
     <DoctorCard doctor={item} />
   );
 
   if (isLoading && doctors.length === 0) {
     return (
-      <ScreenLayout>
+      <ScreenLayout scrollable={false}>
         <View style={styles.container}>
           <LoadingState icon="User" />
         </View>
@@ -29,7 +32,7 @@ export const DoctorsScreen: React.FC = () => {
   }
 
   return (
-    <ScreenLayout>
+    <ScreenLayout scrollable={false}>
       <View style={styles.container}>
         {doctors.length === 0 ? (
           <EmptyState
@@ -43,7 +46,10 @@ export const DoctorsScreen: React.FC = () => {
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
             refreshControl={
-              <RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />
+              <RefreshControl
+                refreshing={isLoading}
+                onRefresh={handleRefresh}
+              />
             }
             contentContainerStyle={styles.list}
           />
@@ -63,4 +69,3 @@ const styles = StyleSheet.create({
 });
 
 export default DoctorsScreen;
-

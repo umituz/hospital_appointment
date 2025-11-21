@@ -1,10 +1,13 @@
-import React from 'react';
-import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
-import { ScreenLayout, useAppDesignTokens } from '@umituz/react-native-design-system';
-import { useHospitals } from '@/domains/hospitals';
-import { HospitalCard } from '@/domains/hospitals/presentation/components/HospitalCard';
-import { EmptyState } from '@/components/common/EmptyState';
-import { LoadingState } from '@/components/common/LoadingState';
+import React from "react";
+import { View, FlatList, RefreshControl, StyleSheet } from "react-native";
+import {
+  ScreenLayout,
+  useAppDesignTokens,
+} from "@umituz/react-native-design-system";
+import { useHospitals } from "@/domains/hospitals";
+import { HospitalCard } from "@/domains/hospitals/presentation/components/HospitalCard";
+import { EmptyState } from "@/components/common/EmptyState";
+import { LoadingState } from "@/components/common/LoadingState";
 
 export const HospitalsScreen: React.FC = () => {
   const tokens = useAppDesignTokens();
@@ -14,13 +17,13 @@ export const HospitalsScreen: React.FC = () => {
     await refetch();
   };
 
-  const renderItem = ({ item }: { item: typeof hospitals[0] }) => (
+  const renderItem = ({ item }: { item: (typeof hospitals)[0] }) => (
     <HospitalCard hospital={item} />
   );
 
   if (isLoading && hospitals.length === 0) {
     return (
-      <ScreenLayout>
+      <ScreenLayout scrollable={false}>
         <View style={styles.container}>
           <LoadingState icon="Building2" />
         </View>
@@ -29,7 +32,7 @@ export const HospitalsScreen: React.FC = () => {
   }
 
   return (
-    <ScreenLayout>
+    <ScreenLayout scrollable={false}>
       <View style={styles.container}>
         {hospitals.length === 0 ? (
           <EmptyState
@@ -43,7 +46,10 @@ export const HospitalsScreen: React.FC = () => {
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
             refreshControl={
-              <RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />
+              <RefreshControl
+                refreshing={isLoading}
+                onRefresh={handleRefresh}
+              />
             }
             contentContainerStyle={styles.list}
           />
@@ -63,4 +69,3 @@ const styles = StyleSheet.create({
 });
 
 export default HospitalsScreen;
-

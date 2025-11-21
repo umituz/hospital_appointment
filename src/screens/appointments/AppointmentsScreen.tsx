@@ -1,12 +1,22 @@
-import React, { useLayoutEffect } from 'react';
-import { View, FlatList, RefreshControl, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { ScreenLayout, AtomicIcon, useAppDesignTokens } from '@umituz/react-native-design-system';
-import { useLocalization } from '@umituz/react-native-localization';
-import { useAppointments } from '@/domains/appointments';
-import { AppointmentCard } from '@/domains/appointments/presentation/components/AppointmentCard';
-import { EmptyState } from '@/components/common/EmptyState';
-import { LoadingState } from '@/components/common/LoadingState';
+import React, { useLayoutEffect } from "react";
+import {
+  View,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import {
+  ScreenLayout,
+  AtomicIcon,
+  useAppDesignTokens,
+} from "@umituz/react-native-design-system";
+import { useLocalization } from "@umituz/react-native-localization";
+import { useAppointments } from "@/domains/appointments";
+import { AppointmentCard } from "@/domains/appointments/presentation/components/AppointmentCard";
+import { EmptyState } from "@/components/common/EmptyState";
+import { LoadingState } from "@/components/common/LoadingState";
 
 export const AppointmentsScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -21,7 +31,7 @@ export const AppointmentsScreen: React.FC = () => {
           onPress={() => {
             // TODO: Navigate to create appointment form
             /* eslint-disable-next-line no-console */
-            if (__DEV__) console.log('Create appointment');
+            if (__DEV__) console.log("Create appointment");
           }}
           style={{ marginRight: 16 }}
         >
@@ -35,13 +45,13 @@ export const AppointmentsScreen: React.FC = () => {
     await refetch();
   };
 
-  const renderItem = ({ item }: { item: typeof appointments[0] }) => (
+  const renderItem = ({ item }: { item: (typeof appointments)[0] }) => (
     <AppointmentCard appointment={item} />
   );
 
   if (isLoading && appointments.length === 0) {
     return (
-      <ScreenLayout>
+      <ScreenLayout scrollable={false}>
         <View style={styles.container}>
           <LoadingState icon="Calendar" />
         </View>
@@ -50,7 +60,7 @@ export const AppointmentsScreen: React.FC = () => {
   }
 
   return (
-    <ScreenLayout>
+    <ScreenLayout scrollable={false}>
       <View style={styles.container}>
         {appointments.length === 0 ? (
           <EmptyState
@@ -64,7 +74,10 @@ export const AppointmentsScreen: React.FC = () => {
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
             refreshControl={
-              <RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />
+              <RefreshControl
+                refreshing={isLoading}
+                onRefresh={handleRefresh}
+              />
             }
             contentContainerStyle={styles.list}
           />
@@ -84,4 +97,3 @@ const styles = StyleSheet.create({
 });
 
 export default AppointmentsScreen;
-
