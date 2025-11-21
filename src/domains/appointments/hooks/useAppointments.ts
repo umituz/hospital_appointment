@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { AppointmentRepository } from '../infrastructure/repositories';
 import { Appointment } from '../types';
 
@@ -7,9 +7,11 @@ export function useAppointments() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const repository = new AppointmentRepository();
+  // Memoize repository to prevent recreation on every render
+  const repository = useMemo(() => new AppointmentRepository(), []);
 
-  const fetchAppointments = async () => {
+  // Memoize fetch function to prevent infinite loops
+  const fetchAppointments = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -20,11 +22,11 @@ export function useAppointments() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [repository]);
 
   useEffect(() => {
     fetchAppointments();
-  }, []);
+  }, [fetchAppointments]);
 
   return {
     appointments,

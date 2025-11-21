@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, FlatList, RefreshControl, StyleSheet } from 'react-native';
-import { ScreenLayout, AtomicText, AtomicIcon, useAppDesignTokens } from '@umituz/react-native-design-system';
-import { useLocalization } from '@umituz/react-native-localization';
+import { ScreenLayout, useAppDesignTokens } from '@umituz/react-native-design-system';
 import { useHospitals } from '@/domains/hospitals';
+import { HospitalCard } from '@/domains/hospitals/presentation/components/HospitalCard';
+import { EmptyState } from '@/components/common/EmptyState';
+import { LoadingState } from '@/components/common/LoadingState';
 
 export const HospitalsScreen: React.FC = () => {
   const tokens = useAppDesignTokens();
-  const { t } = useLocalization();
   const { hospitals, isLoading, refetch } = useHospitals();
 
   const handleRefresh = async () => {
@@ -14,33 +15,14 @@ export const HospitalsScreen: React.FC = () => {
   };
 
   const renderItem = ({ item }: { item: typeof hospitals[0] }) => (
-    <View style={[styles.card, { backgroundColor: tokens.colors.surface }]}>
-      <AtomicText type="headlineSmall" style={{ color: tokens.colors.textPrimary }}>
-        {item.name}
-      </AtomicText>
-      {item.address && (
-        <AtomicText type="bodyMedium" style={{ color: tokens.colors.textSecondary, marginTop: 4 }}>
-          {item.address}
-        </AtomicText>
-      )}
-      {item.phone && (
-        <AtomicText type="bodySmall" style={{ color: tokens.colors.textSecondary, marginTop: 4 }}>
-          {item.phone}
-        </AtomicText>
-      )}
-    </View>
+    <HospitalCard hospital={item} />
   );
 
   if (isLoading && hospitals.length === 0) {
     return (
       <ScreenLayout>
         <View style={styles.container}>
-          <View style={styles.emptyState}>
-            <AtomicIcon name="Building2" size="xxl" color="secondary" />
-            <AtomicText type="bodyMedium" style={{ color: tokens.colors.textSecondary, marginTop: 16 }}>
-              {t('general.loading')}
-            </AtomicText>
-          </View>
+          <LoadingState icon="Building2" />
         </View>
       </ScreenLayout>
     );
@@ -50,15 +32,11 @@ export const HospitalsScreen: React.FC = () => {
     <ScreenLayout>
       <View style={styles.container}>
         {hospitals.length === 0 ? (
-          <View style={styles.emptyState}>
-            <AtomicIcon name="Building2" size="xxl" color="secondary" />
-            <AtomicText type="headlineSmall" style={{ color: tokens.colors.textSecondary, marginTop: 16 }}>
-              {t('hospitals.empty.title')}
-            </AtomicText>
-            <AtomicText type="bodyMedium" style={{ color: tokens.colors.textSecondary, marginTop: 8 }}>
-              {t('hospitals.empty.description')}
-            </AtomicText>
-          </View>
+          <EmptyState
+            icon="Building2"
+            title="hospitals.empty.title"
+            description="hospitals.empty.description"
+          />
         ) : (
           <FlatList
             data={hospitals}
@@ -81,17 +59,6 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 16,
-  },
-  card: {
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-  },
-  emptyState: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 32,
   },
 });
 

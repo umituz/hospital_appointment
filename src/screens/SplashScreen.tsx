@@ -7,6 +7,7 @@
 import React from "react";
 import { SplashScreen as GenericSplashScreen } from "@umituz/react-native-splash";
 import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
+import { AtomicText } from "@umituz/react-native-design-system-atoms";
 import { useLocalization } from "@umituz/react-native-localization";
 import { DeviceEventEmitter } from "react-native";
 
@@ -33,7 +34,9 @@ export const SplashScreen: React.FC = () => {
       minimumDisplayTime={1500}
       onReady={handleReady}
       renderFooter={() => (
-        <>{t("branding.poweredBy", "Powered by UmitUZ App Factory")}</>
+        <AtomicText type="bodySmall" style={{ color: tokens.colors.textSecondary, textAlign: 'center', marginTop: 16 }}>
+          {t("branding.poweredBy", "Powered by UmitUZ App Factory")}
+        </AtomicText>
       )}
     />
   );

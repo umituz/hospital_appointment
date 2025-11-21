@@ -1,0 +1,32 @@
+{
+  "sections": {
+    "app": {
+      "title": "App Settings"
+    }
+  },
+  "appearance": {
+    "title": "Appearance",
+    "description": "Theme and display settings"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "description": "Manage notification preferences"
+  },
+  "about": {
+    "title": "About",
+    "description": "App information and version"
+  },
+  "legal": {
+    "title": "Legal",
+    "description": "Terms and privacy policy"
+  },
+  "languageSelection": {
+    "title": "Language"
+  },
+  "resetOnboarding": {
+    "title": "Reset Onboarding",
+    "description": "Show onboarding again",
+    "error": "Failed to reset onboarding"
+  }
+}
+

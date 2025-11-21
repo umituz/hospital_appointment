@@ -28,6 +28,12 @@
     "patientPhone": "Patient Phone",
     "notes": "Notes",
     "reminder": "Reminder"
+  },
+  "detail": {
+    "info": {
+      "title": "Appointment Information",
+      "minutesBefore": "minutes before"
+    }
   }
 }
 

@@ -19,6 +19,6 @@ export type SettingsStackParamList = {
   Settings: undefined;
   Appearance: undefined;
   LanguageSelection: undefined;
-
-
+  About: undefined;
+  Legal: undefined;
 };

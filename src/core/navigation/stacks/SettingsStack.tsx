@@ -1,56 +1,82 @@
 import React from 'react';
-import { createStackNavigator } from '@umituz/react-native-tabs-bottom-navigator';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useLocalization } from '@umituz/react-native-localization';
 import { STATIC_TOKENS, useAppDesignTokens } from '@umituz/react-native-design-system-theme';
-import { SettingsScreen, AppearanceScreen, LanguageSelectionScreen } from '@umituz/react-native-settings';
-
-
+import {
+  AppearanceScreen,
+  LanguageSelectionScreen,
+} from '@umituz/react-native-settings';
+import { AboutScreen } from '@umituz/react-native-about';
+import { LegalScreen } from '@umituz/react-native-legal';
+import { SettingsScreen } from '@/screens/SettingsScreen';
 import { SettingsStackParamList } from '@core/navigation/types';
-import type { StackNavigatorConfig } from '@umituz/react-native-tabs-bottom-navigator';
+
+const SettingsStack = createStackNavigator<SettingsStackParamList>();
 
 export const SettingsStackNavigator: React.FC = () => {
+  const { t } = useLocalization();
   const tokens = useAppDesignTokens();
 
   const screenOptions = {
-    headerStyle: { backgroundColor: tokens.colors.surface, borderBottomColor: tokens.colors.borderLight, borderBottomWidth: 1 },
-    headerTitleStyle: { ...STATIC_TOKENS.typography.headingMedium, color: tokens.colors.textPrimary },
+    headerStyle: {
+      backgroundColor: tokens.colors.surface,
+      borderBottomColor: tokens.colors.borderLight,
+      borderBottomWidth: 1,
+    },
+    headerTitleStyle: {
+      ...STATIC_TOKENS.typography.headingMedium,
+      color: tokens.colors.textPrimary,
+    },
     headerTintColor: tokens.colors.textPrimary,
   };
 
-  const stackConfig: StackNavigatorConfig = {
-    screens: [
-      {
-        name: 'Settings',
-        component: SettingsScreen,
-        options: { title: 'Settings', headerShown: false },
-      },
-      {
-        name: 'Appearance',
-        component: AppearanceScreen,
-        options: {
+  return (
+    <SettingsStack.Navigator screenOptions={screenOptions}>
+      <SettingsStack.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{ title: t('navigation.settings'), headerShown: false }}
+      />
+      <SettingsStack.Screen
+        name="Appearance"
+        component={AppearanceScreen}
+        options={{
           headerShown: true,
-          headerTitle: 'Appearance',
+          headerTitle: t('settings.appearance.title'),
           headerTitleAlign: 'center',
-          headerBackTitle: 'Settings',
-        },
-      },
-      {
-        name: 'LanguageSelection',
-        component: LanguageSelectionScreen,
-        options: {
+          headerBackTitle: t('navigation.settings'),
+        }}
+      />
+      <SettingsStack.Screen
+        name="LanguageSelection"
+        component={LanguageSelectionScreen}
+        options={{
           headerShown: true,
-          headerTitle: 'Language',
+          headerTitle: t('settings.languageSelection.title'),
           headerTitleAlign: 'center',
-          headerBackTitle: 'Settings',
-        },
-      },
-      
-      
-    ],
-    initialRouteName: 'Settings',
-    screenOptions,
-  };
-
-  const StackNavigator = createStackNavigator<SettingsStackParamList>(stackConfig);
-
-  return <StackNavigator />;
+          headerBackTitle: t('navigation.settings'),
+        }}
+      />
+      <SettingsStack.Screen
+        name="About"
+        component={AboutScreen}
+        options={{
+          headerShown: true,
+          headerTitle: t('settings.about.title'),
+          headerTitleAlign: 'center',
+          headerBackTitle: t('navigation.settings'),
+        }}
+      />
+      <SettingsStack.Screen
+        name="Legal"
+        component={LegalScreen}
+        options={{
+          headerShown: true,
+          headerTitle: t('settings.legal.title'),
+          headerTitleAlign: 'center',
+          headerBackTitle: t('navigation.settings'),
+        }}
+      />
+    </SettingsStack.Navigator>
+  );
 };

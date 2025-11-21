@@ -25,7 +25,7 @@ export const initializeApp = async () => {
   await Promise.all([
     useTheme.getState().initialize(),
     useLocalizationStore.getState().initialize(),
-    useOnboardingStore.getState().initialize(),
+    useOnboardingStore.getState().initialize('@hospital_appointment_onboarding_completed'),
   ]);
 
   return { success: true };

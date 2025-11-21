@@ -1,0 +1,2 @@
+export { HospitalCard } from './HospitalCard';
+

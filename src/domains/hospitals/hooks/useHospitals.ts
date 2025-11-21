@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { HospitalRepository } from '../infrastructure/repositories';
 import { Hospital } from '../types';
 
@@ -7,9 +7,11 @@ export function useHospitals() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const repository = new HospitalRepository();
+  // Memoize repository to prevent recreation on every render
+  const repository = useMemo(() => new HospitalRepository(), []);
 
-  const fetchHospitals = async () => {
+  // Memoize fetch function to prevent infinite loops
+  const fetchHospitals = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -20,11 +22,11 @@ export function useHospitals() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [repository]);
 
   useEffect(() => {
     fetchHospitals();
-  }, []);
+  }, [fetchHospitals]);
 
   return {
     hospitals,
