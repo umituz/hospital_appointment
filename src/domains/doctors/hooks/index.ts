@@ -5,3 +5,4 @@ export { useUpdateDoctor } from "./useUpdateDoctor";
 export { useDeleteDoctor } from "./useDeleteDoctor";
 export { useDoctorsByDepartment } from "./useDoctorsByDepartment";
 export { useDoctorForm } from "./useDoctorForm";
+export { useDoctorSearch } from "./useDoctorSearch";

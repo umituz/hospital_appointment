@@ -13,8 +13,12 @@ import {
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 import { AppNavigation } from "@umituz/react-native-navigation";
-import { useDoctors } from "@/domains/doctors";
-import { DoctorCard } from "@/domains/doctors/presentation/components/DoctorCard";
+import { useDoctors, useDoctorSearch } from "@/domains/doctors";
+import {
+  DoctorCard,
+  DoctorSearchBar,
+  DoctorFilterChips,
+} from "@/domains/doctors/presentation/components";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingState } from "@/components/common/LoadingState";
 
@@ -22,6 +26,17 @@ export const DoctorsScreen: React.FC = () => {
   const navigation = useNavigation();
   const tokens = useAppDesignTokens();
   const { doctors, isLoading, refetch } = useDoctors();
+  const {
+    searchQuery,
+    setSearchQuery,
+    selectedSpecialty,
+    setSelectedSpecialty,
+    selectedHospital,
+    setSelectedHospital,
+    filteredDoctors,
+    specialties,
+    hasActiveFilters,
+  } = useDoctorSearch(doctors);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -42,13 +57,36 @@ export const DoctorsScreen: React.FC = () => {
     await refetch();
   };
 
-  const renderItem = ({ item }: { item: (typeof doctors)[0] }) => (
+  const handleViewProfile = (doctorId: string) => {
+    AppNavigation.navigate("EditDoctor", { doctorId });
+  };
+
+  const handleBookNow = (doctorId: string) => {
+    AppNavigation.navigate("EditDoctor", { doctorId });
+  };
+
+  const renderItem = ({ item }: { item: (typeof filteredDoctors)[0] }) => (
     <DoctorCard
       doctor={item}
-      onPress={() => {
-        AppNavigation.navigate("EditDoctor", { doctorId: item.id });
-      }}
+      onViewProfile={() => handleViewProfile(item.id)}
+      onBookNow={() => handleBookNow(item.id)}
     />
+  );
+
+  const renderHeader = () => (
+    <View>
+      <DoctorSearchBar value={searchQuery} onChangeText={setSearchQuery} />
+      <DoctorFilterChips
+        specialties={specialties}
+        selectedSpecialty={selectedSpecialty}
+        onSpecialtySelect={setSelectedSpecialty}
+        selectedHospital={selectedHospital}
+        onHospitalSelect={setSelectedHospital}
+        onAvailableTodayPress={() => {
+          /* TODO: Implement available today filter */
+        }}
+      />
+    </View>
   );
 
   if (isLoading && doctors.length === 0) {
@@ -64,26 +102,24 @@ export const DoctorsScreen: React.FC = () => {
   return (
     <ScreenLayout scrollable={false}>
       <View style={styles.container}>
-        {doctors.length === 0 ? (
-          <EmptyState
-            icon="User"
-            title="doctors.empty.title"
-            description="doctors.empty.description"
-          />
-        ) : (
-          <FlatList
-            data={doctors}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            refreshControl={
-              <RefreshControl
-                refreshing={isLoading}
-                onRefresh={handleRefresh}
-              />
-            }
-            contentContainerStyle={styles.list}
-          />
-        )}
+        <FlatList
+          data={filteredDoctors}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          ListHeaderComponent={renderHeader}
+          ListEmptyComponent={
+            <EmptyState
+              icon="Search"
+              title="doctors.search.noResults"
+              description="doctors.search.noResultsDescription"
+            />
+          }
+          refreshControl={
+            <RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />
+          }
+          contentContainerStyle={styles.list}
+          showsVerticalScrollIndicator={false}
+        />
       </View>
     </ScreenLayout>
   );
@@ -95,6 +131,7 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 16,
+    paddingTop: 0,
   },
 });
 

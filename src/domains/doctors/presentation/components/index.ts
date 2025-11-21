@@ -2,3 +2,5 @@ export { DoctorCard } from "./DoctorCard";
 export { DoctorFormFields } from "./DoctorFormFields";
 export { DoctorFormActions } from "./DoctorFormActions";
 export { DepartmentPicker } from "./DepartmentPicker";
+export { DoctorSearchBar } from "./DoctorSearchBar";
+export { DoctorFilterChips } from "./DoctorFilterChips";
