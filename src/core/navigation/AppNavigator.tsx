@@ -31,15 +31,14 @@
  * ✅ Privacy-first architecture
  */
 
-import React, { useState, useEffect } from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import { useAppDesignTokens } from '@umituz/react-native-design-system-theme';
-import { useOnboardingStore } from '@umituz/react-native-onboarding';
-import { SplashScreen } from '@screens/SplashScreen';
-import { OnboardingFlowScreen } from '@/domains/onboarding';
-import { MainNavigator } from './tabs/MainTabs';
-import { RootStackParamList } from './types';
-import { AppointmentDetailScreen } from '@screens/appointments/AppointmentDetailScreen';
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+import { useAppDesignTokens } from "@umituz/react-native-design-system-theme";
+import { useOnboardingStore } from "@umituz/react-native-onboarding";
+import { OnboardingFlowScreen } from "@/domains/onboarding";
+import { MainNavigator } from "./tabs/MainTabs";
+import { RootStackParamList } from "./types";
+import { AppointmentDetailScreen } from "@screens/appointments/AppointmentDetailScreen";
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
@@ -49,35 +48,21 @@ const OnboardingScreenWrapper: React.FC = () => {
 
 export const AppNavigator: React.FC = () => {
   const tokens = useAppDesignTokens();
-  const [isInitialized, setIsInitialized] = useState(false);
-  const isOnboardingComplete = useOnboardingStore((state) => state.isOnboardingComplete);
+
+  // ✅ Use onboarding store state directly instead of local state
+  const isOnboardingComplete = useOnboardingStore(
+    (state) => state.isOnboardingComplete,
+  );
   const loading = useOnboardingStore((state) => state.loading);
 
-  useEffect(() => {
-    const checkInitialization = async () => {
-      await useOnboardingStore.getState().initialize('@hospital_appointment_onboarding_completed');
-    };
-
-    checkInitialization();
-  }, []);
-
-  useEffect(() => {
-    const splashSubscription = require('react-native').DeviceEventEmitter.addListener('splash-ready', () => {
-      setIsInitialized(true);
-    });
-
-    return () => {
-      splashSubscription.remove();
-    };
-  }, []);
-
-  if (loading || !isInitialized) {
+  // Don't render navigator until onboarding store has finished loading
+  if (loading) {
     return null;
   }
 
   return (
     <RootStack.Navigator
-      key={isOnboardingComplete ? 'main' : 'onboarding'}
+      key={isOnboardingComplete ? "main" : "onboarding"}
       screenOptions={{
         headerShown: false,
         cardStyle: { backgroundColor: tokens.colors.backgroundPrimary },
@@ -96,7 +81,7 @@ export const AppNavigator: React.FC = () => {
             component={OnboardingScreenWrapper}
             options={{
               headerShown: false,
-              presentation: 'modal',
+              presentation: "modal",
               gestureEnabled: false,
             }}
           />
@@ -105,8 +90,8 @@ export const AppNavigator: React.FC = () => {
             component={AppointmentDetailScreen}
             options={{
               headerShown: true,
-              title: 'Appointment Detail',
-              presentation: 'modal',
+              title: "Appointment Detail",
+              presentation: "modal",
             }}
           />
         </>
