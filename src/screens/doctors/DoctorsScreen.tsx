@@ -19,6 +19,7 @@ import {
   DoctorSearchBar,
   DoctorFilterChips,
 } from "@/domains/doctors/presentation/components";
+import { useDepartments } from "@/domains/appointments";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingState } from "@/components/common/LoadingState";
 
@@ -26,6 +27,7 @@ export const DoctorsScreen: React.FC = () => {
   const navigation = useNavigation();
   const tokens = useAppDesignTokens();
   const { doctors, isLoading, refetch } = useDoctors();
+  const { departments } = useDepartments(undefined);
   const {
     searchQuery,
     setSearchQuery,
@@ -73,22 +75,6 @@ export const DoctorsScreen: React.FC = () => {
     />
   );
 
-  const renderHeader = () => (
-    <View>
-      <DoctorSearchBar value={searchQuery} onChangeText={setSearchQuery} />
-      <DoctorFilterChips
-        specialties={specialties}
-        selectedSpecialty={selectedSpecialty}
-        onSpecialtySelect={setSelectedSpecialty}
-        selectedHospital={selectedHospital}
-        onHospitalSelect={setSelectedHospital}
-        onAvailableTodayPress={() => {
-          /* TODO: Implement available today filter */
-        }}
-      />
-    </View>
-  );
-
   if (isLoading && doctors.length === 0) {
     return (
       <ScreenLayout scrollable={false}>
@@ -102,11 +88,24 @@ export const DoctorsScreen: React.FC = () => {
   return (
     <ScreenLayout scrollable={false}>
       <View style={styles.container}>
+        <View style={styles.header}>
+          <DoctorSearchBar value={searchQuery} onChangeText={setSearchQuery} />
+          <DoctorFilterChips
+            specialties={specialties}
+            selectedSpecialty={selectedSpecialty}
+            onSpecialtySelect={setSelectedSpecialty}
+            selectedHospital={selectedHospital}
+            onHospitalSelect={setSelectedHospital}
+            onAvailableTodayPress={() => {
+              /* TODO: Implement available today filter */
+            }}
+            departments={departments}
+          />
+        </View>
         <FlatList
           data={filteredDoctors}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          ListHeaderComponent={renderHeader}
           ListEmptyComponent={
             <EmptyState
               icon="Search"
@@ -128,6 +127,9 @@ export const DoctorsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    backgroundColor: "transparent",
   },
   list: {
     padding: 16,

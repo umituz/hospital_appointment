@@ -20,10 +20,12 @@
   },
   "create": {
     "title": "Add New Doctor",
+    "description": "Fill in the information below to add a new doctor",
     "submit": "Create Doctor"
   },
   "edit": {
     "title": "Edit Doctor",
+    "description": "Update the doctor information below",
     "submit": "Update Doctor"
   },
   "messages": {

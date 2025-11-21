@@ -1,10 +1,5 @@
-import React, { useCallback, useEffect } from "react";
-import { StyleSheet, FlatList, TouchableOpacity } from "react-native";
-import { BottomSheet, useBottomSheet } from "@umituz/react-native-bottom-sheet";
-import {
-  AtomicText,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import React, { useMemo } from "react";
+import { FilterSheet, type FilterOption } from "@umituz/react-native-filter";
 import { useLocalization } from "@umituz/react-native-localization";
 import { Department } from "@/domains/appointments/types";
 
@@ -23,86 +18,38 @@ export const DepartmentPicker: React.FC<DepartmentPickerProps> = ({
   onSelect,
   onClose,
 }) => {
-  const tokens = useAppDesignTokens();
   const { t } = useLocalization();
-  const { sheetRef, open, close } = useBottomSheet();
 
-  useEffect(() => {
-    if (visible) {
-      open();
-    } else {
-      close();
+  const filterOptions: FilterOption[] = useMemo(
+    () =>
+      departments.map((dept) => ({
+        id: dept.id.toString(),
+        label: dept.name,
+      })),
+    [departments],
+  );
+
+  const handleFilterSelect = (filterId: string) => {
+    if (filterId && filterId !== selectedDepartmentId) {
+      onSelect(filterId);
     }
-  }, [visible, open, close]);
+    onClose();
+  };
 
-  const handleSelect = useCallback(
-    (departmentId: string) => {
-      onSelect(departmentId);
-      close();
-      onClose();
-    },
-    [onSelect, close, onClose],
-  );
-
-  const renderItem = useCallback(
-    ({ item }: { item: Department }) => {
-      const isSelected = item.id.toString() === selectedDepartmentId;
-      return (
-        <TouchableOpacity
-          onPress={() => handleSelect(item.id.toString())}
-          style={[
-            styles.item,
-            {
-              backgroundColor: isSelected
-                ? tokens.colors.primaryLight
-                : tokens.colors.surface,
-            },
-          ]}
-        >
-          <AtomicText
-            type="bodyLarge"
-            color={isSelected ? "primary" : "textPrimary"}
-          >
-            {item.name}
-          </AtomicText>
-        </TouchableOpacity>
-      );
-    },
-    [selectedDepartmentId, handleSelect, tokens],
-  );
+  const handleClear = () => {
+    onSelect("");
+    onClose();
+  };
 
   return (
-    <BottomSheet
-      ref={sheetRef}
-      preset="medium"
-      snapPoints={["50%", "75%"]}
+    <FilterSheet
+      visible={visible}
+      options={filterOptions}
+      selectedIds={selectedDepartmentId ? [selectedDepartmentId] : []}
+      onFilterPress={handleFilterSelect}
+      onClearFilters={handleClear}
       onClose={onClose}
-    >
-      <AtomicText type="headlineSmall" color="textPrimary" style={styles.title}>
-        {t("doctors.fields.department")}
-      </AtomicText>
-      <FlatList
-        data={departments}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.list}
-      />
-    </BottomSheet>
+      title={t("doctors.fields.department")}
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  title: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
-  },
-  list: {
-    padding: 16,
-  },
-  item: {
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-});

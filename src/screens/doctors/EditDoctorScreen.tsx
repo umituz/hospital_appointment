@@ -14,6 +14,7 @@ import { useDoctor, useUpdateDoctor, useDoctorForm } from "@/domains/doctors";
 import {
   DoctorFormFields,
   DoctorFormActions,
+  DepartmentPicker,
 } from "@/domains/doctors/presentation/components";
 import { DepartmentRepository } from "@/domains/appointments/infrastructure/repositories";
 import { Department } from "@/domains/appointments/types";
@@ -105,7 +106,7 @@ export const EditDoctorScreen: React.FC = () => {
   }
 
   return (
-    <ScreenLayout>
+    <ScreenLayout scrollable={false}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}
@@ -148,6 +149,14 @@ export const EditDoctorScreen: React.FC = () => {
         onSubmit={handleSubmit}
         onCancel={handleCancel}
         submitLabel={t("doctors.edit.submit") || "Update Doctor"}
+      />
+
+      <DepartmentPicker
+        visible={showDepartmentPicker}
+        departments={departments}
+        selectedDepartmentId={formData.department_id}
+        onSelect={handleSelectDepartment}
+        onClose={() => setShowDepartmentPicker(false)}
       />
     </ScreenLayout>
   );

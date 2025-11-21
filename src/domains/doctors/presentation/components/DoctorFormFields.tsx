@@ -12,7 +12,6 @@ import {
 import { useLocalization } from "@umituz/react-native-localization";
 import { DoctorFormData } from "../../types";
 import { Department } from "@/domains/appointments/types";
-import { DepartmentPicker } from "./DepartmentPicker";
 
 interface DoctorFormFieldsProps {
   formData: DoctorFormData;
@@ -89,14 +88,6 @@ export const DoctorFormFields: React.FC<DoctorFormFieldsProps> = ({
           <AtomicIcon name="ChevronDown" size="md" color="secondary" />
         </TouchableOpacity>
       </View>
-
-      <DepartmentPicker
-        visible={showDepartmentPicker}
-        departments={departments}
-        selectedDepartmentId={formData.department_id}
-        onSelect={onSelectDepartment}
-        onClose={onToggleDepartmentPicker}
-      />
 
       <AtomicInput
         label={t("doctors.fields.phone")}
