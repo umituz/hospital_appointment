@@ -4,6 +4,19 @@
     "title": "No doctors yet",
     "description": "Click the + button to add your first doctor"
   },
+  "create": {
+    "title": "Add New Doctor",
+    "submit": "Create Doctor"
+  },
+  "edit": {
+    "title": "Edit Doctor",
+    "submit": "Update Doctor"
+  },
+  "messages": {
+    "created": "Doctor created successfully",
+    "updated": "Doctor updated successfully",
+    "deleted": "Doctor deleted successfully"
+  },
   "validation": {
     "nameRequired": "Doctor name is required",
     "specialtyRequired": "Specialty field is required",
@@ -12,6 +25,14 @@
     "phoneInvalid": "Please enter a valid phone number",
     "ratingInvalid": "Rating must be between 0 and 5",
     "experienceInvalid": "Experience years cannot be negative"
+  },
+  "errors": {
+    "idRequired": "Doctor ID is required",
+    "createFailed": "Failed to create doctor",
+    "updateFailed": "Failed to update doctor",
+    "deleteFailed": "Failed to delete doctor",
+    "notFound": "Doctor not found",
+    "notFoundDescription": "The doctor you are looking for does not exist"
   },
   "fields": {
     "name": "Name",
@@ -22,6 +43,15 @@
     "rating": "Rating",
     "experienceYears": "Experience Years",
     "notes": "Notes"
+  },
+  "placeholders": {
+    "name": "Enter doctor name",
+    "specialty": "Enter specialty",
+    "selectDepartment": "Select Department",
+    "phone": "Enter phone number",
+    "email": "Enter email address",
+    "rating": "0-5",
+    "experienceYears": "Years of experience",
+    "notes": "Additional notes"
   }
 }
-

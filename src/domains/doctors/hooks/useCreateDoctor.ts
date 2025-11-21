@@ -1,13 +1,13 @@
-import { useState, useCallback } from 'react';
-import { DoctorService } from '../infrastructure/services';
-import { DoctorFormData } from '../types';
-import { useLocalization } from '@umituz/react-native-localization';
+import { useState, useCallback, useMemo } from "react";
+import { DoctorService } from "../infrastructure/services";
+import { DoctorFormData } from "../types";
+import { useLocalization } from "@umituz/react-native-localization";
 
 export function useCreateDoctor() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { t } = useLocalization();
-  const service = new DoctorService();
+  const service = useMemo(() => new DoctorService(), []);
 
   const create = useCallback(
     async (data: DoctorFormData) => {
@@ -17,14 +17,15 @@ export function useCreateDoctor() {
         await service.createDoctor(data, t);
         return true;
       } catch (err) {
-        const error = err instanceof Error ? err : new Error('Failed to create doctor');
+        const error =
+          err instanceof Error ? err : new Error("Failed to create doctor");
         setError(error);
         return false;
       } finally {
         setIsLoading(false);
       }
     },
-    [t],
+    [service, t],
   );
 
   return {
@@ -33,4 +34,3 @@ export function useCreateDoctor() {
     error,
   };
 }
-

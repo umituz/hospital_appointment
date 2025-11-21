@@ -1,17 +1,19 @@
-import { useState, useEffect } from 'react';
-import { DoctorRepository } from '../infrastructure/repositories';
-import { Doctor } from '../types';
+import { useState, useEffect, useMemo } from "react";
+import { DoctorRepository } from "../infrastructure/repositories";
+import { Doctor } from "../types";
 
 export function useDoctor(id: string | undefined) {
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const repository = new DoctorRepository();
+  const repository = useMemo(() => new DoctorRepository(), []);
 
   useEffect(() => {
     if (!id) {
       setIsLoading(false);
+      setDoctor(null);
+      setError(null);
       return;
     }
 
@@ -22,14 +24,17 @@ export function useDoctor(id: string | undefined) {
         const data = await repository.getById(id);
         setDoctor(data);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to fetch doctor'));
+        const error =
+          err instanceof Error ? err : new Error("Failed to fetch doctor");
+        setError(error);
+        setDoctor(null);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchDoctor();
-  }, [id]);
+  }, [id, repository]);
 
   return {
     doctor,
@@ -37,4 +42,3 @@ export function useDoctor(id: string | undefined) {
     error,
   };
 }
-

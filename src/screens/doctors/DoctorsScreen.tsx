@@ -1,24 +1,54 @@
-import React from "react";
-import { View, FlatList, RefreshControl, StyleSheet } from "react-native";
+import React, { useLayoutEffect } from "react";
+import {
+  View,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import {
   ScreenLayout,
+  AtomicIcon,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
+import { AppNavigation } from "@umituz/react-native-navigation";
 import { useDoctors } from "@/domains/doctors";
 import { DoctorCard } from "@/domains/doctors/presentation/components/DoctorCard";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingState } from "@/components/common/LoadingState";
 
 export const DoctorsScreen: React.FC = () => {
+  const navigation = useNavigation();
   const tokens = useAppDesignTokens();
   const { doctors, isLoading, refetch } = useDoctors();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => {
+            AppNavigation.navigate("CreateDoctor");
+          }}
+          style={{ marginRight: 16 }}
+        >
+          <AtomicIcon name="Plus" size="lg" color="primary" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
 
   const handleRefresh = async () => {
     await refetch();
   };
 
   const renderItem = ({ item }: { item: (typeof doctors)[0] }) => (
-    <DoctorCard doctor={item} />
+    <DoctorCard
+      doctor={item}
+      onPress={() => {
+        AppNavigation.navigate("EditDoctor", { doctorId: item.id });
+      }}
+    />
   );
 
   if (isLoading && doctors.length === 0) {

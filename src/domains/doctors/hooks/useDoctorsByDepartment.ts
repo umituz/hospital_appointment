@@ -1,40 +1,47 @@
-import { useState, useEffect } from 'react';
-import { DoctorRepository } from '../infrastructure/repositories';
-import { Doctor } from '../types';
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { DoctorRepository } from "../infrastructure/repositories";
+import { Doctor } from "../types";
 
-export function useDoctorsByDepartment(departmentId: string | number | undefined) {
+export function useDoctorsByDepartment(
+  departmentId: string | number | undefined,
+) {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const repository = new DoctorRepository();
+  const repository = useMemo(() => new DoctorRepository(), []);
 
-  useEffect(() => {
+  const fetchDoctors = useCallback(async () => {
     if (!departmentId) {
       setIsLoading(false);
+      setDoctors([]);
+      setError(null);
       return;
     }
 
-    const fetchDoctors = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const data = await repository.getByDepartmentId(departmentId);
-        setDoctors(data);
-      } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to fetch doctors'));
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    try {
+      setIsLoading(true);
+      setError(null);
+      const data = await repository.getByDepartmentId(departmentId);
+      setDoctors(data);
+    } catch (err) {
+      const error =
+        err instanceof Error ? err : new Error("Failed to fetch doctors");
+      setError(error);
+      setDoctors([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [departmentId, repository]);
 
+  useEffect(() => {
     fetchDoctors();
-  }, [departmentId]);
+  }, [fetchDoctors]);
 
   return {
     doctors,
     isLoading,
     error,
+    refetch: fetchDoctors,
   };
 }
-

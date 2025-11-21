@@ -5,6 +5,8 @@ export type RootStackParamList = {
   Legal: undefined;
   About: undefined;
   AppointmentDetail: undefined;
+  CreateDoctor: undefined;
+  EditDoctor: { doctorId: string };
 };
 
 export type MainTabParamList = {
