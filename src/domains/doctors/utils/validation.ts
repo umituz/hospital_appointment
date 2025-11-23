@@ -1,4 +1,12 @@
-import { DoctorFormData } from '../types';
+import {
+  validateRequired,
+  validateEmail,
+  validatePhone,
+  validateNumberRange,
+  validatePositiveNumber,
+  batchValidate,
+} from "@umituz/react-native-validation";
+import { DoctorFormData } from "../types";
 
 export interface ValidationResult {
   isValid: boolean;
@@ -6,50 +14,81 @@ export interface ValidationResult {
 }
 
 export class DoctorValidationService {
-  static validateFormData(data: DoctorFormData, t: (key: string) => string): ValidationResult {
-    const errors: string[] = [];
-
-    if (!data.name || data.name.trim().length === 0) {
-      errors.push(t('doctors.validation.nameRequired'));
-    }
-
-    if (!data.specialty || data.specialty.trim().length === 0) {
-      errors.push(t('doctors.validation.specialtyRequired'));
-    }
-
-    if (!data.department_id || data.department_id.trim().length === 0) {
-      errors.push(t('doctors.validation.departmentRequired'));
-    }
+  static validateFormData(
+    data: DoctorFormData,
+    t: (key: string) => string,
+  ): ValidationResult {
+    const validations = [
+      {
+        field: "name",
+        validator: () =>
+          validateRequired(data.name, t("doctors.fields.name") || "Name"),
+      },
+      {
+        field: "specialty",
+        validator: () =>
+          validateRequired(
+            data.specialty,
+            t("doctors.fields.specialty") || "Specialty",
+          ),
+      },
+      {
+        field: "department_id",
+        validator: () =>
+          validateRequired(
+            data.department_id,
+            t("doctors.fields.department") || "Department",
+          ),
+      },
+    ];
 
     if (data.email && data.email.trim().length > 0) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(data.email)) {
-        errors.push(t('doctors.validation.emailInvalid'));
-      }
+      validations.push({
+        field: "email",
+        validator: () => validateEmail(data.email),
+      });
     }
 
     if (data.phone && data.phone.trim().length > 0) {
-      const phoneRegex = /^[0-9+\s()-]+$/;
-      if (!phoneRegex.test(data.phone)) {
-        errors.push(t('doctors.validation.phoneInvalid'));
-      }
+      validations.push({
+        field: "phone",
+        validator: () => validatePhone(data.phone),
+      });
     }
 
     if (data.rating && data.rating.trim().length > 0) {
       const rating = parseFloat(data.rating);
-      if (isNaN(rating) || rating < 0 || rating > 5) {
-        errors.push(t('doctors.validation.ratingInvalid'));
+      if (!isNaN(rating)) {
+        validations.push({
+          field: "rating",
+          validator: () =>
+            validateNumberRange(
+              rating,
+              0,
+              5,
+              t("doctors.fields.rating") || "Rating",
+            ),
+        });
       }
     }
 
-    if (data.experience_years && data.experience_years < 0) {
-      errors.push(t('doctors.validation.experienceInvalid'));
+    if (data.experience_years !== undefined) {
+      validations.push({
+        field: "experience_years",
+        validator: () =>
+          validatePositiveNumber(
+            data.experience_years,
+            t("doctors.fields.experienceYears") || "Experience Years",
+          ),
+      });
     }
 
+    const result = batchValidate(validations);
+    const errors = Object.values(result.errors).filter(Boolean);
+
     return {
-      isValid: errors.length === 0,
-      errors,
+      isValid: result.isValid,
+      errors: errors.length > 0 ? errors : [],
     };
   }
 }
-

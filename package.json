@@ -73,6 +73,7 @@
     "@umituz/react-native-gamification": "latest",
     "@umituz/react-native-haptics": "latest",
     "@umituz/react-native-image": "latest",
+    "@umituz/react-native-infinite-scroll": "1.1.1",
     "@umituz/react-native-legal": "latest",
     "@umituz/react-native-loading": "latest",
     "@umituz/react-native-localization": "latest",

@@ -7,6 +7,11 @@ import {
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
+import {
+  SwipeableItem,
+  useSwipeActions,
+} from "@umituz/react-native-swipe-actions";
+import { useTimezone } from "@umituz/react-native-timezone";
 import { Doctor } from "../../types";
 import { useDoctorDepartment } from "../../hooks";
 
@@ -14,18 +19,30 @@ interface DoctorCardProps {
   doctor: Doctor;
   onEditProfile?: () => void;
   onShowDetails?: () => void;
+  onDelete?: () => void;
 }
 
 export const DoctorCard: React.FC<DoctorCardProps> = ({
   doctor,
   onEditProfile,
   onShowDetails,
+  onDelete,
 }) => {
   const tokens = useAppDesignTokens();
   const { t } = useLocalization();
+  const { formatDate } = useTimezone();
   const departmentName = useDoctorDepartment(doctor.department_id);
+  const { createDeleteAction, createEditAction } = useSwipeActions();
 
-  return (
+  const rightActions = [];
+  if (onDelete) {
+    rightActions.push(createDeleteAction(onDelete));
+  }
+  if (onEditProfile) {
+    rightActions.push(createEditAction(onEditProfile));
+  }
+
+  const cardContent = (
     <View
       style={[
         styles.card,
@@ -82,6 +99,16 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
               {departmentName}
             </AtomicText>
           )}
+          {doctor.created_at && (
+            <AtomicText
+              type="bodySmall"
+              color="textSecondary"
+              style={styles.date}
+            >
+              {t("doctors.fields.createdAt") || "Created"}:{" "}
+              {formatDate(new Date(doctor.created_at))}
+            </AtomicText>
+          )}
         </View>
       </View>
 
@@ -105,6 +132,14 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
       </View>
     </View>
   );
+
+  if (rightActions.length > 0) {
+    return (
+      <SwipeableItem rightActions={rightActions}>{cardContent}</SwipeableItem>
+    );
+  }
+
+  return cardContent;
 };
 
 const styles = StyleSheet.create({
@@ -144,6 +179,9 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   hospital: {
+    marginTop: 4,
+  },
+  date: {
     marginTop: 4,
   },
   actions: {

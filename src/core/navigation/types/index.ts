@@ -8,6 +8,9 @@ export type RootStackParamList = {
   CreateDoctor: undefined;
   EditDoctor: { doctorId: string };
   DoctorDetail: { doctorId: string };
+  CreateHospital: undefined;
+  EditHospital: { hospitalId: string };
+  HospitalDetail: { hospitalId: string };
 };
 
 export type MainTabParamList = {

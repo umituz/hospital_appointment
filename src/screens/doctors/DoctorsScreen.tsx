@@ -1,12 +1,21 @@
-import React, { useLayoutEffect } from "react";
-import { View, FlatList, RefreshControl, StyleSheet } from "react-native";
+import React, { useLayoutEffect, useMemo } from "react";
+import { View, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenLayout } from "@umituz/react-native-design-system";
 import { AtomicFab } from "@umituz/react-native-design-system-atoms";
 import { SearchBar } from "@umituz/react-native-search";
 import { FilterSheet } from "@umituz/react-native-filter";
+import { InfiniteScrollList } from "@umituz/react-native-infinite-scroll";
 import { useLocalization } from "@umituz/react-native-localization";
-import { useDoctorsList, useDoctorNavigation } from "@/domains/doctors";
+import {
+  useDoctorsList,
+  useDoctorNavigation,
+  useDeleteDoctor,
+} from "@/domains/doctors";
+import {
+  getDoctorsPage,
+  hasMoreDoctors,
+} from "@/domains/doctors/utils/pagination";
 import {
   DoctorCard,
   DoctorsListHeader,
@@ -21,6 +30,7 @@ export const DoctorsScreen: React.FC = () => {
   const { t } = useLocalization();
   const { navigateToCreate, navigateToEdit, navigateToDetail } =
     useDoctorNavigation();
+  const { deleteDoctor } = useDeleteDoctor();
 
   const {
     doctors,
@@ -73,15 +83,46 @@ export const DoctorsScreen: React.FC = () => {
     openHospitalFilter,
   ]);
 
-  const handleRefresh = async () => {
-    await refetch();
+  const handleDelete = async (doctorId: string) => {
+    Alert.alert(
+      t("general.confirm") || "Confirm",
+      t("doctors.messages.deleteConfirm") ||
+        "Are you sure you want to delete this doctor?",
+      [
+        {
+          text: t("general.cancel") || "Cancel",
+          style: "cancel",
+        },
+        {
+          text: t("general.delete") || "Delete",
+          style: "destructive",
+          onPress: async () => {
+            const success = await deleteDoctor(doctorId);
+            if (success) {
+              await refetch();
+            }
+          },
+        },
+      ],
+    );
   };
 
-  const renderItem = ({ item }: { item: Doctor }) => (
+  const fetchDoctorsPage = async (
+    page: number,
+    pageSize: number,
+  ): Promise<Doctor[]> => {
+    if (!doctors.length && isLoading) {
+      await refetch();
+    }
+    return getDoctorsPage(doctors, page, pageSize);
+  };
+
+  const renderItem = (doctor: Doctor) => (
     <DoctorCard
-      doctor={item}
-      onEditProfile={() => navigateToEdit(item.id)}
-      onShowDetails={() => navigateToDetail(item.id)}
+      doctor={doctor}
+      onEditProfile={() => navigateToEdit(doctor.id)}
+      onShowDetails={() => navigateToDetail(doctor.id)}
+      onDelete={() => handleDelete(doctor.id)}
     />
   );
 
@@ -95,7 +136,7 @@ export const DoctorsScreen: React.FC = () => {
     );
   }
 
-  const renderListHeader = () => (
+  const listHeader = (
     <View style={styles.headerContainer}>
       <View style={styles.searchWrapper}>
         <SearchBar
@@ -120,23 +161,31 @@ export const DoctorsScreen: React.FC = () => {
   return (
     <ScreenLayout scrollable={false}>
       <View style={styles.container}>
-        <FlatList
-          data={doctors}
+        <InfiniteScrollList
+          key={`${selectedSpecialty}-${selectedHospital}-${query}`}
+          config={{
+            pageSize: 20,
+            threshold: 5,
+            fetchData: fetchDoctorsPage,
+            getItemKey: (doctor) => doctor.id,
+            hasMore: (lastPage: Doctor[], allPages: Doctor[][]) => {
+              const loadedDoctors = allPages.flat();
+              return hasMoreDoctors(doctors, loadedDoctors);
+            },
+          }}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          ListHeaderComponent={renderListHeader}
-          ListEmptyComponent={
+          emptyComponent={
             <EmptyState
               icon="Search"
               title="doctors.search.noResults"
               description="doctors.search.noResultsDescription"
             />
           }
-          refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={handleRefresh} />
-          }
-          contentContainerStyle={styles.list}
-          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={listHeader}
+          flatListProps={{
+            contentContainerStyle: styles.list,
+            showsVerticalScrollIndicator: false,
+          }}
         />
 
         <AtomicFab

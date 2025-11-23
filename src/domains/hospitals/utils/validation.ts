@@ -1,4 +1,11 @@
-import { HospitalFormData } from '../types';
+import {
+  validateRequired,
+  validateEmail,
+  validatePhone,
+  validateNumberRange,
+  batchValidate,
+} from "@umituz/react-native-validation";
+import { HospitalFormData } from "../types";
 
 export interface ValidationResult {
   isValid: boolean;
@@ -6,43 +13,72 @@ export interface ValidationResult {
 }
 
 export class HospitalValidationService {
-  static validateFormData(data: HospitalFormData, t: (key: string) => string): ValidationResult {
-    const errors: string[] = [];
-
-    if (!data.name || data.name.trim().length === 0) {
-      errors.push(t('hospitals.validation.nameRequired'));
-    }
-
-    if (!data.address || data.address.trim().length === 0) {
-      errors.push(t('hospitals.validation.addressRequired'));
-    }
+  static validateFormData(
+    data: HospitalFormData,
+    t: (key: string) => string,
+  ): ValidationResult {
+    const validations = [
+      {
+        field: "name",
+        validator: () =>
+          validateRequired(data.name, t("hospitals.fields.name") || "Name"),
+      },
+      {
+        field: "address",
+        validator: () =>
+          validateRequired(
+            data.address,
+            t("hospitals.fields.address") || "Address",
+          ),
+      },
+    ];
 
     if (data.email && data.email.trim().length > 0) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(data.email)) {
-        errors.push(t('hospitals.validation.emailInvalid'));
-      }
+      validations.push({
+        field: "email",
+        validator: () => validateEmail(data.email),
+      });
     }
 
     if (data.phone && data.phone.trim().length > 0) {
-      const phoneRegex = /^[0-9+\s()-]+$/;
-      if (!phoneRegex.test(data.phone)) {
-        errors.push(t('hospitals.validation.phoneInvalid'));
-      }
+      validations.push({
+        field: "phone",
+        validator: () => validatePhone(data.phone),
+      });
     }
 
-    if (data.latitude !== undefined && (data.latitude < -90 || data.latitude > 90)) {
-      errors.push(t('hospitals.validation.latitudeInvalid'));
+    if (data.latitude !== undefined) {
+      validations.push({
+        field: "latitude",
+        validator: () =>
+          validateNumberRange(
+            data.latitude,
+            -90,
+            90,
+            t("hospitals.fields.latitude") || "Latitude",
+          ),
+      });
     }
 
-    if (data.longitude !== undefined && (data.longitude < -180 || data.longitude > 180)) {
-      errors.push(t('hospitals.validation.longitudeInvalid'));
+    if (data.longitude !== undefined) {
+      validations.push({
+        field: "longitude",
+        validator: () =>
+          validateNumberRange(
+            data.longitude,
+            -180,
+            180,
+            t("hospitals.fields.longitude") || "Longitude",
+          ),
+      });
     }
+
+    const result = batchValidate(validations);
+    const errors = Object.values(result.errors).filter(Boolean);
 
     return {
-      isValid: errors.length === 0,
-      errors,
+      isValid: result.isValid,
+      errors: errors.length > 0 ? errors : [],
     };
   }
 }
-

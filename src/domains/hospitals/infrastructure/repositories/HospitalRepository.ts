@@ -1,42 +1,10 @@
-import { Hospital, HospitalFormData } from '../../types';
-import { storageService } from '../../../storage/infrastructure/services';
+import { Hospital, HospitalFormData } from "../../types";
+import { storageService } from "../../../storage/infrastructure/services";
 
-const STORAGE_KEY = '@hospital_appointment:hospitals';
+const STORAGE_KEY = "@hospital_appointment:hospitals";
+const MIGRATION_FLAG_KEY = "@hospital_appointment:hospitals_migrated";
 
-const SAMPLE_HOSPITALS: Hospital[] = [
-  {
-    id: '1',
-    name: 'Ankara Şehir Hastanesi',
-    address: 'Bilkent, Ankara',
-    phone: '+90 312 123 45 67',
-    latitude: 39.9334,
-    longitude: 32.8597,
-  },
-  {
-    id: '2',
-    name: 'İstanbul Üniversitesi Tıp Fakültesi',
-    address: 'Çapa, İstanbul',
-    phone: '+90 212 123 45 67',
-    latitude: 41.0082,
-    longitude: 28.9784,
-  },
-  {
-    id: '3',
-    name: 'Acıbadem Maslak Hastanesi',
-    address: 'Maslak, İstanbul',
-    phone: '+90 212 123 45 68',
-    latitude: 41.1085,
-    longitude: 29.0205,
-  },
-  {
-    id: '4',
-    name: 'Memorial Şişli Hastanesi',
-    address: 'Şişli, İstanbul',
-    phone: '+90 212 123 45 69',
-    latitude: 41.0602,
-    longitude: 28.9874,
-  },
-];
+const OLD_MOCK_HOSPITAL_IDS = ["1", "2", "3", "4"];
 
 export class HospitalRepository {
   private async getAllFromStorage(): Promise<Hospital[]> {
@@ -48,13 +16,36 @@ export class HospitalRepository {
     await storageService.setItem(STORAGE_KEY, hospitals);
   }
 
-  async getAll(): Promise<Hospital[]> {
-    const stored = await this.getAllFromStorage();
-    if (stored.length === 0) {
-      await this.saveToStorage(SAMPLE_HOSPITALS);
-      return SAMPLE_HOSPITALS;
+  private async isMigrated(): Promise<boolean> {
+    const migrated = await storageService.getItem<boolean>(
+      MIGRATION_FLAG_KEY,
+      false,
+    );
+    return migrated === true;
+  }
+
+  private async markAsMigrated(): Promise<void> {
+    await storageService.setItem(MIGRATION_FLAG_KEY, true);
+  }
+
+  private async clearOldMockData(): Promise<void> {
+    const hospitals = await this.getAllFromStorage();
+    const hasOldMockData = hospitals.some((h) =>
+      OLD_MOCK_HOSPITAL_IDS.includes(h.id),
+    );
+
+    if (hasOldMockData) {
+      await this.saveToStorage([]);
+      await this.markAsMigrated();
     }
-    return stored;
+  }
+
+  async getAll(): Promise<Hospital[]> {
+    const migrated = await this.isMigrated();
+    if (!migrated) {
+      await this.clearOldMockData();
+    }
+    return this.getAllFromStorage();
   }
 
   async getById(id: string): Promise<Hospital | null> {
@@ -79,7 +70,7 @@ export class HospitalRepository {
     const hospitals = await this.getAllFromStorage();
     const index = hospitals.findIndex((h) => h.id === id);
     if (index === -1) {
-      throw new Error('Hospital not found');
+      throw new Error("Hospital not found");
     }
     const updatedHospital: Hospital = {
       ...hospitals[index],
@@ -97,5 +88,8 @@ export class HospitalRepository {
     const filtered = hospitals.filter((h) => h.id !== id);
     await this.saveToStorage(filtered);
   }
-}
 
+  async clearAll(): Promise<void> {
+    await this.saveToStorage([]);
+  }
+}

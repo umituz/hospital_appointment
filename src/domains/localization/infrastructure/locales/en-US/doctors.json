@@ -36,7 +36,8 @@
   "messages": {
     "created": "Doctor created successfully",
     "updated": "Doctor updated successfully",
-    "deleted": "Doctor deleted successfully"
+    "deleted": "Doctor deleted successfully",
+    "deleteConfirm": "Are you sure you want to delete this doctor?"
   },
   "validation": {
     "nameRequired": "Doctor name is required",
@@ -63,7 +64,8 @@
     "email": "Email",
     "rating": "Rating",
     "experienceYears": "Experience Years",
-    "notes": "Notes"
+    "notes": "Notes",
+    "createdAt": "Created"
   },
   "placeholders": {
     "name": "Enter doctor name",

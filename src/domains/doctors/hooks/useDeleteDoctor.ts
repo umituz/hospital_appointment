@@ -28,7 +28,7 @@ export function useDeleteDoctor() {
   );
 
   return {
-    remove,
+    deleteDoctor: remove,
     isLoading,
     error,
   };

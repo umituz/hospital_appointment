@@ -42,6 +42,9 @@ import { AppointmentDetailScreen } from "@screens/appointments/AppointmentDetail
 import { CreateDoctorScreen } from "@screens/doctors/CreateDoctorScreen";
 import { EditDoctorScreen } from "@screens/doctors/EditDoctorScreen";
 import { DoctorDetailScreen } from "@screens/doctors/DoctorDetailScreen";
+import { CreateHospitalScreen } from "@screens/hospitals/CreateHospitalScreen";
+import { EditHospitalScreen } from "@screens/hospitals/EditHospitalScreen";
+import { HospitalDetailScreen } from "@screens/hospitals/HospitalDetailScreen";
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
@@ -121,6 +124,33 @@ export const AppNavigator: React.FC = () => {
             options={{
               headerShown: true,
               title: "Doctor Details",
+              presentation: "modal",
+            }}
+          />
+          <RootStack.Screen
+            name="CreateHospital"
+            component={CreateHospitalScreen}
+            options={{
+              headerShown: true,
+              title: "Add Hospital",
+              presentation: "modal",
+            }}
+          />
+          <RootStack.Screen
+            name="EditHospital"
+            component={EditHospitalScreen}
+            options={{
+              headerShown: true,
+              title: "Edit Hospital",
+              presentation: "modal",
+            }}
+          />
+          <RootStack.Screen
+            name="HospitalDetail"
+            component={HospitalDetailScreen}
+            options={{
+              headerShown: true,
+              title: "Hospital Details",
               presentation: "modal",
             }}
           />

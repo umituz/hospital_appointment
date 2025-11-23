@@ -2,7 +2,9 @@ import { useState, useCallback } from "react";
 import { Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useLocalization } from "@umituz/react-native-localization";
-import { useDoctor, useUpdateDoctor, useDoctorForm } from "./index";
+import { useDoctor } from "./useDoctor";
+import { useUpdateDoctor } from "./useUpdateDoctor";
+import { useDoctorForm } from "./useDoctorForm";
 import { useDepartments } from "@/domains/appointments";
 
 export function useEditDoctorForm(doctorId: string | undefined) {
