@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { DoctorRepository } from "../../doctors/infrastructure/repositories";
 import { Doctor } from "../../doctors/types";
 
-export function useDoctors(departmentId?: string, hospitalId?: string) {
+export function useDoctors() {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -10,25 +10,32 @@ export function useDoctors(departmentId?: string, hospitalId?: string) {
   const repository = new DoctorRepository();
 
   useEffect(() => {
-    if (!departmentId || !hospitalId) {
-      setDoctors([]);
-      setIsLoading(false);
-      return;
-    }
+    console.log("🔍 useDoctors Debug: Fetching all doctors");
 
     const fetchDoctors = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        // Get all doctors and filter by both hospital and department
+        console.log("🔄 useDoctors: Fetching all doctors...");
+
+        // Get all doctors without filtering
         const allDoctors = await repository.getAll();
-        const filteredDoctors = allDoctors.filter(
-          (doctor) =>
-            doctor.department_id === departmentId &&
-            doctor.hospital_id === hospitalId,
+        console.log(
+          "📊 useDoctors: All doctors from repository:",
+          allDoctors.length,
+          allDoctors.map((d) => ({
+            id: d.id,
+            name: d.name,
+            specialty: d.specialty,
+            hospital_id: d.hospital_id,
+            department_id: d.department_id,
+          })),
         );
-        setDoctors(filteredDoctors);
+
+        setDoctors(allDoctors);
+        console.log("✅ useDoctors: All doctors loaded successfully");
       } catch (err) {
+        console.error("❌ useDoctors: Error fetching doctors:", err);
         setError(
           err instanceof Error ? err : new Error("Failed to fetch doctors"),
         );
@@ -38,7 +45,7 @@ export function useDoctors(departmentId?: string, hospitalId?: string) {
     };
 
     fetchDoctors();
-  }, [departmentId, hospitalId]);
+  }, []);
 
   return {
     doctors,

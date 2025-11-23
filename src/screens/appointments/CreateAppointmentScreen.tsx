@@ -36,24 +36,38 @@ export const CreateAppointmentScreen: React.FC = () => {
   } = useCreateAppointmentForm();
 
   const { hospitals } = useHospitals();
-  const { departments } = useDepartments(formData.hospital_id);
-  const { doctors } = useDoctors(formData.department_id, formData.hospital_id);
+  const { departments } = useDepartments(); // Tüm department'ları getir
+  const { doctors } = useDoctors(); // Tüm doctor'ları getir
+
+  // Debug logging
+  console.log("🔍 CreateAppointmentScreen Debug:", {
+    formData: {
+      hospital_id: formData.hospital_id,
+      department_id: formData.department_id,
+      doctor_id: formData.doctor_id,
+    },
+    hospitalsCount: hospitals.length,
+    departmentsCount: departments.length,
+    doctorsCount: doctors.length,
+    note: "Filtreleme kaldırıldı - tüm seçenekler gösteriliyor",
+  });
 
   const handleSelectHospital = useCallback(
     (hospitalId: string) => {
+      console.log("🏥 handleSelectHospital called:", { hospitalId });
       onSelectHospital(hospitalId);
-      updateFormData("department_id", "");
-      updateFormData("doctor_id", "");
+      console.log("✅ handleSelectHospital: Hospital selected");
     },
-    [onSelectHospital, updateFormData],
+    [onSelectHospital],
   );
 
   const handleSelectDepartment = useCallback(
     (departmentId: string) => {
+      console.log("🩺 handleSelectDepartment called:", { departmentId });
       onSelectDepartment(departmentId);
-      updateFormData("doctor_id", "");
+      console.log("✅ handleSelectDepartment: Department selected");
     },
-    [onSelectDepartment, updateFormData],
+    [onSelectDepartment],
   );
 
   return (

@@ -47,24 +47,21 @@ export const EditAppointmentScreen: React.FC = () => {
   } = useEditAppointmentForm(appointmentId);
 
   const { hospitals } = useHospitals();
-  const { departments } = useDepartments(formData.hospital_id);
-  const { doctors } = useDoctors(formData.department_id);
+  const { departments } = useDepartments(); // Tüm department'ları getir
+  const { doctors } = useDoctors(); // Tüm doctor'ları getir
 
   const handleSelectHospital = useCallback(
     (hospitalId: string) => {
       onSelectHospital(hospitalId);
-      updateFormData("department_id", "");
-      updateFormData("doctor_id", "");
     },
-    [onSelectHospital, updateFormData],
+    [onSelectHospital],
   );
 
   const handleSelectDepartment = useCallback(
     (departmentId: string) => {
       onSelectDepartment(departmentId);
-      updateFormData("doctor_id", "");
     },
-    [onSelectDepartment, updateFormData],
+    [onSelectDepartment],
   );
 
   if (isLoading) {
