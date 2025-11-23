@@ -36,5 +36,20 @@
       "title": "Appointment Information",
       "minutesBefore": "minutes before"
     }
+  },
+  "placeholders": {
+    "selectHospital": "Select Hospital",
+    "selectDepartment": "Select Department",
+    "selectDoctor": "Select Doctor",
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "enterPatientName": "Enter patient name",
+    "enterPatientPhone": "Enter patient phone",
+    "addNotes": "Add notes"
+  },
+  "deleteConfirm": "Are you sure you want to delete this appointment?",
+  "card": {
+    "showDetails": "Show Details",
+    "edit": "Edit"
   }
 }

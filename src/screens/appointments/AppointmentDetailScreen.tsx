@@ -3,23 +3,31 @@
  * View detailed information about an appointment
  */
 
-import React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
-import { ScreenLayout, AtomicText, useAppDesignTokens } from '@umituz/react-native-design-system';
-import { AtomicCard } from '@umituz/react-native-design-system-atoms';
-import { useLocalization } from '@umituz/react-native-localization';
-import { useAppointment } from '@/domains/appointments';
-import { AppointmentInfoCard } from '@/domains/appointments/presentation/components/AppointmentInfoCard';
-import { LoadingState } from '@/components/common/LoadingState';
-import { EmptyState } from '@/components/common/EmptyState';
+import React from "react";
+import { ScrollView, StyleSheet } from "react-native";
+import {
+  ScreenLayout,
+  AtomicText,
+  useAppDesignTokens,
+} from "@umituz/react-native-design-system";
+import { AtomicCard } from "@umituz/react-native-design-system-atoms";
+import { useLocalization } from "@umituz/react-native-localization";
+import { useRoute } from "@react-navigation/native";
+import { useAppointment } from "@/domains/appointments";
+import { AppointmentInfoCard } from "@/domains/appointments/presentation/components/AppointmentInfoCard";
+import { LoadingState } from "@/components/common/LoadingState";
+import { EmptyState } from "@/components/common/EmptyState";
 
-interface AppointmentDetailScreenProps {
-  appointmentId?: string;
+interface AppointmentDetailScreenParams {
+  appointmentId: string;
 }
 
-export const AppointmentDetailScreen: React.FC<AppointmentDetailScreenProps> = ({ appointmentId }) => {
+export const AppointmentDetailScreen: React.FC = () => {
+  const route = useRoute();
   const tokens = useAppDesignTokens();
   const { t } = useLocalization();
+  const { appointmentId } =
+    (route.params as AppointmentDetailScreenParams) || {};
   const { appointment, isLoading, error } = useAppointment(appointmentId);
 
   if (isLoading) {
@@ -44,16 +52,23 @@ export const AppointmentDetailScreen: React.FC<AppointmentDetailScreenProps> = (
 
   return (
     <ScreenLayout>
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+      >
         <AtomicCard variant="elevated" padding="lg" style={styles.card}>
           <AtomicText type="headlineMedium" color="textPrimary">
-            {appointment.hospital_name || t('appointments.fields.hospital')}
+            {appointment.hospital_name || t("appointments.fields.hospital")}
           </AtomicText>
-          <AtomicText type="bodyLarge" color="textSecondary" style={styles.subtitle}>
-            {appointment.doctor_name || t('appointments.fields.doctor')}
+          <AtomicText
+            type="bodyLarge"
+            color="textSecondary"
+            style={styles.subtitle}
+          >
+            {appointment.doctor_name || t("appointments.fields.doctor")}
           </AtomicText>
           <AtomicText type="bodyMedium" color="textSecondary">
-            {appointment.department_name || t('appointments.fields.department')}
+            {appointment.department_name || t("appointments.fields.department")}
           </AtomicText>
         </AtomicCard>
 
@@ -61,8 +76,12 @@ export const AppointmentDetailScreen: React.FC<AppointmentDetailScreenProps> = (
 
         {appointment.notes && (
           <AtomicCard variant="elevated" padding="lg" style={styles.card}>
-            <AtomicText type="titleMedium" color="textPrimary" style={styles.notesTitle}>
-              {t('appointments.fields.notes')}
+            <AtomicText
+              type="titleMedium"
+              color="textPrimary"
+              style={styles.notesTitle}
+            >
+              {t("appointments.fields.notes")}
             </AtomicText>
             <AtomicText type="bodyMedium" color="textSecondary">
               {appointment.notes}
@@ -93,4 +112,3 @@ const styles = StyleSheet.create({
 });
 
 export default AppointmentDetailScreen;
-

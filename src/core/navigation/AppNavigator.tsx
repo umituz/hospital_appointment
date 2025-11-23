@@ -39,6 +39,8 @@ import { OnboardingFlowScreen } from "@/domains/onboarding";
 import { MainNavigator } from "./tabs/MainTabs";
 import { RootStackParamList } from "./types";
 import { AppointmentDetailScreen } from "@screens/appointments/AppointmentDetailScreen";
+import { CreateAppointmentScreen } from "@screens/appointments/CreateAppointmentScreen";
+import { EditAppointmentScreen } from "@screens/appointments/EditAppointmentScreen";
 import { CreateDoctorScreen } from "@screens/doctors/CreateDoctorScreen";
 import { EditDoctorScreen } from "@screens/doctors/EditDoctorScreen";
 import { DoctorDetailScreen } from "@screens/doctors/DoctorDetailScreen";
@@ -97,6 +99,24 @@ export const AppNavigator: React.FC = () => {
             options={{
               headerShown: true,
               title: "Appointment Detail",
+              presentation: "modal",
+            }}
+          />
+          <RootStack.Screen
+            name="CreateAppointment"
+            component={CreateAppointmentScreen}
+            options={{
+              headerShown: true,
+              title: "Create Appointment",
+              presentation: "modal",
+            }}
+          />
+          <RootStack.Screen
+            name="EditAppointment"
+            component={EditAppointmentScreen}
+            options={{
+              headerShown: true,
+              title: "Edit Appointment",
               presentation: "modal",
             }}
           />

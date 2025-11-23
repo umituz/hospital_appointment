@@ -4,13 +4,15 @@ export type RootStackParamList = {
   Main: undefined;
   Legal: undefined;
   About: undefined;
-  AppointmentDetail: undefined;
+  AppointmentDetail: { appointmentId: string };
   CreateDoctor: undefined;
   EditDoctor: { doctorId: string };
   DoctorDetail: { doctorId: string };
   CreateHospital: undefined;
   EditHospital: { hospitalId: string };
   HospitalDetail: { hospitalId: string };
+  CreateAppointment: undefined;
+  EditAppointment: { appointmentId: string };
 };
 
 export type MainTabParamList = {
