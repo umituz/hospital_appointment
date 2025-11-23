@@ -1,12 +1,12 @@
 {
   "expo": {
     "name": "Hospital Appointment",
-    "slug": "hospital_appointment",
+    "slug": "hospitalappointment",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "scheme": "hospital_appointment",
+    "scheme": "hospitalappointment",
     "description": "Manage hospital appointments, track doctors, and organize medical visits",
     "primaryCategory": "Health & Fitness",
     "splash": {
@@ -16,7 +16,7 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.umituz.hospitalointment",
+      "bundleIdentifier": "com.umituz.hospitalappointment",
       "buildNumber": "1",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
@@ -85,7 +85,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": true,
-      "package": "com.umituz.hospitalointment",
+      "package": "com.umituz.hospitalappointment",
       "versionCode": 1
     },
     "web": {
