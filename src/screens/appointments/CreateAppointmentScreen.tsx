@@ -69,15 +69,14 @@ export const CreateAppointmentScreen: React.FC = () => {
             color="textPrimary"
             style={styles.title}
           >
-            {t("appointments.create.title") || "Create Appointment"}
+            {t("appointments.create.title")}
           </AtomicText>
           <AtomicText
             type="bodyMedium"
             color="textSecondary"
             style={styles.subtitle}
           >
-            {t("appointments.create.description") ||
-              "Fill in the details to schedule a new appointment"}
+            {t("appointments.create.description")}
           </AtomicText>
         </View>
 
@@ -111,7 +110,7 @@ export const CreateAppointmentScreen: React.FC = () => {
         isLoading={isLoading}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
-        submitLabel={t("appointments.create.submit") || "Schedule Appointment"}
+        submitLabel={t("appointments.create.submit")}
       />
     </ScreenLayout>
   );

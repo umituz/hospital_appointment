@@ -52,21 +52,19 @@ export function useAppointmentForm(appointment?: Appointment) {
   const handleDateSelect = useCallback(() => {
     if (Platform.OS !== "web") {
       Alert.prompt(
-        t("appointments.fields.date") || "Select Date",
-        t("appointments.placeholders.selectDate") ||
-          "Enter date in YYYY-MM-DD format:",
+        t("appointments.fields.date"),
+        t("appointments.placeholders.selectDate"),
         [
-          { text: t("general.cancel") || "Cancel", style: "cancel" },
+          { text: t("general.cancel"), style: "cancel" },
           {
-            text: t("general.ok") || "OK",
+            text: t("general.ok"),
             onPress: (date: string | undefined) => {
               if (date && AppointmentValidationService.validateDate(date)) {
                 updateFormData("appointment_date", date);
               } else {
                 Alert.alert(
-                  t("general.error") || "Error",
-                  t("appointments.validation.dateInvalid") ||
-                    "Invalid date format (YYYY-MM-DD)",
+                  t("general.error"),
+                  t("appointments.validation.dateInvalid"),
                 );
               }
             },
@@ -81,21 +79,19 @@ export function useAppointmentForm(appointment?: Appointment) {
   const handleTimeSelect = useCallback(() => {
     if (Platform.OS !== "web") {
       Alert.prompt(
-        t("appointments.fields.time") || "Select Time",
-        t("appointments.placeholders.selectTime") ||
-          "Enter time in HH:MM format:",
+        t("appointments.fields.time"),
+        t("appointments.placeholders.selectTime"),
         [
-          { text: t("general.cancel") || "Cancel", style: "cancel" },
+          { text: t("general.cancel"), style: "cancel" },
           {
-            text: t("general.ok") || "OK",
+            text: t("general.ok"),
             onPress: (time: string | undefined) => {
               if (time && AppointmentValidationService.validateTime(time)) {
                 updateFormData("appointment_time", time);
               } else {
                 Alert.alert(
-                  t("general.error") || "Error",
-                  t("appointments.validation.timeInvalid") ||
-                    "Invalid time format (HH:MM)",
+                  t("general.error"),
+                  t("appointments.validation.timeInvalid"),
                 );
               }
             },

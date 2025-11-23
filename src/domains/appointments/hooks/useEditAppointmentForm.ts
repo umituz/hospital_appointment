@@ -51,29 +51,21 @@ export function useEditAppointmentForm(appointmentId: string | undefined) {
 
   const handleSubmit = useCallback(async () => {
     if (!appointmentId) {
-      Alert.alert(
-        t("general.error") || "Error",
-        t("appointments.errors.idRequired") || "Appointment ID is required",
-      );
+      Alert.alert(t("general.error"), t("appointments.errors.idRequired"));
       return;
     }
 
     const success = await update(appointmentId, formData);
     if (success) {
-      Alert.alert(
-        t("general.success") || "Success",
-        t("appointments.messages.updated") ||
-          "Appointment updated successfully",
-        [
-          {
-            text: t("general.ok") || "OK",
-            onPress: () => {
-              refetch();
-              navigation.goBack();
-            },
+      Alert.alert(t("general.success"), t("appointments.messages.updated"), [
+        {
+          text: t("general.ok"),
+          onPress: () => {
+            refetch();
+            navigation.goBack();
           },
-        ],
-      );
+        },
+      ]);
     } else if (error) {
       Alert.alert(
         t("general.error") || "Error",

@@ -33,8 +33,8 @@ export const AppointmentFormActions: React.FC<AppointmentFormActionsProps> = ({
         style={styles.submitButton}
       >
         {isLoading
-          ? t("general.loading") || "Loading..."
-          : submitLabel || t("appointments.create.submit") || "Save"}
+          ? t("general.loading")
+          : submitLabel || t("appointments.create.submit")}
       </AtomicButton>
       <AtomicButton
         variant="outline"
@@ -42,7 +42,7 @@ export const AppointmentFormActions: React.FC<AppointmentFormActionsProps> = ({
         disabled={isLoading}
         style={styles.cancelButton}
       >
-        {t("general.cancel") || "Cancel"}
+        {t("general.cancel")}
       </AtomicButton>
     </View>
   );

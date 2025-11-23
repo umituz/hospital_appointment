@@ -47,23 +47,18 @@ export function useCreateAppointmentForm() {
   const handleSubmit = useCallback(async () => {
     const success = await create(formData);
     if (success) {
-      Alert.alert(
-        t("general.success") || "Success",
-        t("appointments.messages.created") ||
-          "Appointment created successfully",
-        [
-          {
-            text: t("general.ok") || "OK",
-            onPress: () => {
-              resetForm();
-              navigation.goBack();
-            },
+      Alert.alert(t("general.success"), t("appointments.messages.created"), [
+        {
+          text: t("general.ok"),
+          onPress: () => {
+            resetForm();
+            navigation.goBack();
           },
-        ],
-      );
+        },
+      ]);
     } else if (error) {
       Alert.alert(
-        t("general.error") || "Error",
+        t("general.error"),
         error.message || t("appointments.errors.createFailed"),
       );
     }

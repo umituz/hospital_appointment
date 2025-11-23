@@ -4,6 +4,16 @@
     "title": "No appointments yet",
     "description": "Click the + button to create your first appointment"
   },
+  "create": {
+    "title": "Create Appointment",
+    "description": "Fill in the details to schedule a new appointment",
+    "submit": "Schedule Appointment"
+  },
+  "edit": {
+    "title": "Edit Appointment",
+    "description": "Update the appointment details below",
+    "submit": "Update Appointment"
+  },
   "validation": {
     "hospitalRequired": "Please select a hospital",
     "departmentRequired": "Please select a department",
@@ -32,10 +42,9 @@
     "reminder": "Reminder"
   },
   "detail": {
-    "info": {
-      "title": "Appointment Information",
-      "minutesBefore": "minutes before"
-    }
+    "title": "Appointment Details",
+    "information": "Appointment Information",
+    "minutesBefore": "minutes before"
   },
   "placeholders": {
     "selectHospital": "Select Hospital",
@@ -46,6 +55,19 @@
     "enterPatientName": "Enter patient name",
     "enterPatientPhone": "Enter patient phone",
     "addNotes": "Add notes"
+  },
+  "messages": {
+    "created": "Appointment scheduled successfully",
+    "updated": "Appointment updated successfully",
+    "deleted": "Appointment deleted successfully"
+  },
+  "errors": {
+    "idRequired": "Appointment ID is required",
+    "createFailed": "Failed to schedule appointment",
+    "updateFailed": "Failed to update appointment",
+    "deleteFailed": "Failed to delete appointment",
+    "notFound": "Appointment not found",
+    "notFoundDescription": "The appointment you are looking for does not exist"
   },
   "deleteConfirm": "Are you sure you want to delete this appointment?",
   "card": {

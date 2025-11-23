@@ -49,9 +49,51 @@ export class DepartmentRepository {
   }
 
   async getByHospitalId(hospitalId: string | number): Promise<Department[]> {
-    const departments = await this.getAllFromStorage();
-    return departments.filter(
+    const allDepartments = await this.getAllFromStorage();
+    const filtered = allDepartments.filter(
       (d) => d.hospital_id.toString() === hospitalId.toString(),
     );
+
+    if (filtered.length === 0) {
+      const allHospitals = await this.getAllHospitals();
+      const hospitalExists = allHospitals.some(
+        (h) => h.id.toString() === hospitalId.toString(),
+      );
+
+      if (hospitalExists) {
+        const defaultDepartments =
+          this.createDepartmentsForHospital(hospitalId);
+        const updated = [...allDepartments, ...defaultDepartments];
+        await this.saveToStorage(updated);
+        return defaultDepartments;
+      }
+    }
+
+    return filtered;
+  }
+
+  private async getAllHospitals() {
+    const { HospitalRepository } = await import(
+      "../../../hospitals/infrastructure/repositories"
+    );
+    const hospitalRepo = new HospitalRepository();
+    return hospitalRepo.getAll();
+  }
+
+  private createDepartmentsForHospital(
+    hospitalId: string | number,
+  ): Department[] {
+    const allDepartmentNames = Object.values(DEPARTMENT_NAMES);
+    const timestamp = Date.now();
+
+    return allDepartmentNames.map((name, index) => ({
+      id: `${hospitalId}-${name}-${timestamp}-${index}`,
+      name: name as string,
+      hospital_id: hospitalId,
+    }));
+  }
+
+  private async saveToStorage(departments: Department[]): Promise<void> {
+    await storageService.setItem(STORAGE_KEY, departments);
   }
 }

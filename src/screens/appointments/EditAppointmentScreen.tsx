@@ -100,15 +100,14 @@ export const EditAppointmentScreen: React.FC = () => {
             color="textPrimary"
             style={styles.title}
           >
-            {t("appointments.edit.title") || "Edit Appointment"}
+            {t("appointments.edit.title")}
           </AtomicText>
           <AtomicText
             type="bodyMedium"
             color="textSecondary"
             style={styles.subtitle}
           >
-            {t("appointments.edit.description") ||
-              "Update the appointment details below"}
+            {t("appointments.edit.description")}
           </AtomicText>
         </View>
 
@@ -142,7 +141,7 @@ export const EditAppointmentScreen: React.FC = () => {
         isLoading={isLoadingSubmit}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
-        submitLabel={t("appointments.edit.submit") || "Update Appointment"}
+        submitLabel={t("appointments.edit.submit")}
       />
     </ScreenLayout>
   );

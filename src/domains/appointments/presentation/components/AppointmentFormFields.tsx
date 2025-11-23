@@ -111,8 +111,7 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
             style={styles.pickerText}
           >
             {selectedHospital?.name ||
-              t("appointments.placeholders.selectHospital") ||
-              "Select Hospital"}
+              t("appointments.placeholders.selectHospital")}
           </AtomicText>
           <AtomicIcon name="ChevronDown" size="md" color="secondary" />
         </TouchableOpacity>
@@ -144,8 +143,7 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
               style={styles.pickerText}
             >
               {selectedDepartment?.name ||
-                t("appointments.placeholders.selectDepartment") ||
-                "Select Department"}
+                t("appointments.placeholders.selectDepartment")}
             </AtomicText>
             <AtomicIcon name="ChevronDown" size="md" color="secondary" />
           </TouchableOpacity>
@@ -178,8 +176,7 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
               style={styles.pickerText}
             >
               {selectedDoctor?.name ||
-                t("appointments.placeholders.selectDoctor") ||
-                "Select Doctor"}
+                t("appointments.placeholders.selectDoctor")}
             </AtomicText>
             <AtomicIcon name="ChevronDown" size="md" color="secondary" />
           </TouchableOpacity>
@@ -211,8 +208,7 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
             style={styles.pickerText}
           >
             {formData.appointment_date ||
-              t("appointments.placeholders.selectDate") ||
-              "Select Date"}
+              t("appointments.placeholders.selectDate")}
           </AtomicText>
         </TouchableOpacity>
       </View>
@@ -242,18 +238,14 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
             style={styles.pickerText}
           >
             {formData.appointment_time ||
-              t("appointments.placeholders.selectTime") ||
-              "Select Time"}
+              t("appointments.placeholders.selectTime")}
           </AtomicText>
         </TouchableOpacity>
       </View>
 
       <AtomicInput
         label={t("appointments.fields.patientName")}
-        placeholder={
-          t("appointments.placeholders.enterPatientName") ||
-          "Enter patient name"
-        }
+        placeholder={t("appointments.placeholders.enterPatientName")}
         value={formData.patient_name}
         onChangeText={(text: string) => onUpdateField("patient_name", text)}
         variant="outlined"
@@ -262,10 +254,7 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
 
       <AtomicInput
         label={t("appointments.fields.patientPhone")}
-        placeholder={
-          t("appointments.placeholders.enterPatientPhone") ||
-          "Enter patient phone"
-        }
+        placeholder={t("appointments.placeholders.enterPatientPhone")}
         value={formData.patient_phone}
         onChangeText={(text: string) => onUpdateField("patient_phone", text)}
         variant="outlined"
@@ -275,7 +264,7 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
 
       <AtomicTextArea
         label={t("appointments.fields.notes")}
-        placeholder={t("appointments.placeholders.addNotes") || "Add notes"}
+        placeholder={t("appointments.placeholders.addNotes")}
         value={formData.notes}
         onChangeText={(text: string) => onUpdateField("notes", text)}
         variant="outlined"
@@ -344,7 +333,7 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
                       : "textPrimary"
                   }
                 >
-                  {minutes} {t("appointments.detail.minutesBefore") || "min"}
+                  {minutes} {t("appointments.detail.minutesBefore")}
                 </AtomicText>
               </TouchableOpacity>
             ))}
