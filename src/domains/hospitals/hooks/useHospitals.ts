@@ -1,6 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
-import { HospitalRepository } from "../infrastructure/repositories";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Hospital } from "../types";
+import {
+  GetHospitalsUseCase,
+  GetHospitalsInput,
+} from "../application/use-cases";
+import { HospitalRepository } from "../infrastructure/repositories";
 import { storageService } from "../../storage/infrastructure/services";
 
 export function useHospitals() {
@@ -8,14 +12,25 @@ export function useHospitals() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  const useCase = useMemo(
+    () => new GetHospitalsUseCase(new HospitalRepository(storageService)),
+    [],
+  );
+
   // Memoize fetch function to prevent infinite loops
   const fetchHospitals = useCallback(async () => {
-    const repository = new HospitalRepository(storageService);
     try {
       setIsLoading(true);
       setError(null);
-      const data = await repository.getAll();
-      setHospitals(data);
+
+      const input: GetHospitalsInput = {};
+      const result = await useCase.execute(input);
+
+      if (!result.success) {
+        throw new Error("Failed to fetch hospitals");
+      }
+
+      setHospitals(result.hospitals);
     } catch (err) {
       setError(
         err instanceof Error ? err : new Error("Failed to fetch hospitals"),
@@ -23,7 +38,7 @@ export function useHospitals() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [useCase]);
 
   useEffect(() => {
     fetchHospitals();

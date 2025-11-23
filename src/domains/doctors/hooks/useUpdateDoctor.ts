@@ -1,20 +1,41 @@
 import { useState, useCallback, useMemo } from "react";
-import { DoctorService } from "../infrastructure/services";
 import { DoctorFormData } from "../types";
 import { useLocalization } from "@umituz/react-native-localization";
+import {
+  UpdateDoctorUseCase,
+  UpdateDoctorInput,
+} from "../application/use-cases";
+import { DoctorRepository } from "../infrastructure/repositories";
+import { storageService } from "../../storage/infrastructure/services";
 
 export function useUpdateDoctor() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { t } = useLocalization();
-  const service = useMemo(() => new DoctorService(), []);
+
+  const useCase = useMemo(
+    () => new UpdateDoctorUseCase(new DoctorRepository(storageService)),
+    [],
+  );
 
   const update = useCallback(
     async (id: string, data: Partial<DoctorFormData>) => {
       try {
         setIsLoading(true);
         setError(null);
-        await service.updateDoctor(id, data, t);
+
+        const input: UpdateDoctorInput = {
+          id,
+          data,
+          t,
+        };
+
+        const result = await useCase.execute(input);
+
+        if (!result.success) {
+          throw new Error(result.errors?.join(", ") || "Validation failed");
+        }
+
         return true;
       } catch (err) {
         const error =
@@ -25,7 +46,7 @@ export function useUpdateDoctor() {
         setIsLoading(false);
       }
     },
-    [service, t],
+    [t, useCase],
   );
 
   return {

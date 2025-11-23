@@ -1,38 +1,28 @@
-import { useState, useEffect, useCallback } from "react";
-import { DoctorRepository } from "../infrastructure/repositories";
-import { Doctor } from "../types";
-import { storageService } from "../../storage/infrastructure/services";
+import { useEffect } from "react";
+import { useDoctorsState } from "./useDoctorsState";
+import { useDoctorsError } from "./useDoctorsError";
+import { useDoctorsData } from "./useDoctorsData";
 
-export function useDoctors() {
-  const [doctors, setDoctors] = useState<Doctor[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+export interface UseDoctorsReturn {
+  doctors: import("../types").Doctor[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+}
 
-  // Memoize fetch function to prevent infinite loops
-  const fetchDoctors = useCallback(async () => {
-    const repository = new DoctorRepository(storageService);
-    try {
-      setIsLoading(true);
-      setError(null);
-      const data = await repository.getAll();
-      setDoctors(data);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err : new Error("Failed to fetch doctors"),
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+export function useDoctors(): UseDoctorsReturn {
+  const { state, actions } = useDoctorsState();
+  const errorHandler = useDoctorsError(actions);
+  const { fetchDoctors, refetch } = useDoctorsData(actions, errorHandler);
 
   useEffect(() => {
     fetchDoctors();
   }, [fetchDoctors]);
 
   return {
-    doctors,
-    isLoading,
-    error,
-    refetch: fetchDoctors,
+    doctors: state.doctors,
+    isLoading: state.isLoading,
+    error: state.error,
+    refetch,
   };
 }

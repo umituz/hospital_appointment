@@ -1,19 +1,36 @@
 import { useState, useCallback, useMemo } from "react";
-import { DoctorService } from "../infrastructure/services";
-import { useLocalization } from "@umituz/react-native-localization";
+import {
+  DeleteDoctorUseCase,
+  DeleteDoctorInput,
+} from "../application/use-cases";
+import { DoctorRepository } from "../infrastructure/repositories";
+import { storageService } from "../../storage/infrastructure/services";
 
 export function useDeleteDoctor() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const { t } = useLocalization();
-  const service = useMemo(() => new DoctorService(), []);
+
+  const useCase = useMemo(
+    () => new DeleteDoctorUseCase(new DoctorRepository(storageService)),
+    [],
+  );
 
   const remove = useCallback(
     async (id: string) => {
       try {
         setIsLoading(true);
         setError(null);
-        await service.deleteDoctor(id, t);
+
+        const input: DeleteDoctorInput = {
+          id,
+        };
+
+        const result = await useCase.execute(input);
+
+        if (!result.success) {
+          throw new Error("Failed to delete doctor");
+        }
+
         return true;
       } catch (err) {
         const error =
@@ -24,7 +41,7 @@ export function useDeleteDoctor() {
         setIsLoading(false);
       }
     },
-    [service, t],
+    [useCase],
   );
 
   return {
