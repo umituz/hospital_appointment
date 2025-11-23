@@ -1,11 +1,12 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Linking } from "react-native";
 import {
   AtomicText,
+  AtomicButton,
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
-import { Hospital } from "../../types";
+import { Hospital, getGoogleMapsUrl } from "../../types";
 import { AtomicCard } from "@umituz/react-native-design-system-atoms";
 
 interface HospitalDetailInfoProps {
@@ -46,17 +47,18 @@ export const HospitalDetailInfo: React.FC<HospitalDetailInfoProps> = ({
       </AtomicText>
       <InfoRow label={t("hospitals.fields.phone")} value={hospital.phone} />
       <InfoRow label={t("hospitals.fields.email")} value={hospital.email} />
-      {hospital.latitude !== undefined && hospital.longitude !== undefined && (
-        <>
-          <InfoRow
-            label={t("hospitals.fields.latitude")}
-            value={hospital.latitude}
-          />
-          <InfoRow
-            label={t("hospitals.fields.longitude")}
-            value={hospital.longitude}
-          />
-        </>
+
+      {hospital.address && (
+        <View style={styles.mapsButtonContainer}>
+          <AtomicButton
+            variant="outline"
+            size="md"
+            onPress={() => Linking.openURL(getGoogleMapsUrl(hospital.address))}
+            style={styles.mapsButton}
+          >
+            📍 View on Google Maps
+          </AtomicButton>
+        </View>
       )}
       {hospital.notes && (
         <View style={styles.notesContainer}>
@@ -84,6 +86,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 8,
+  },
+  mapsButtonContainer: {
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  mapsButton: {
+    width: "100%",
   },
   notesContainer: {
     marginTop: 16,

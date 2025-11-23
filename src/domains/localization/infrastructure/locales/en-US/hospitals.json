@@ -39,8 +39,6 @@
     "address": "Enter address",
     "phone": "Enter phone number",
     "email": "Enter email address",
-    "latitude": "Enter latitude",
-    "longitude": "Enter longitude",
     "notes": "Additional notes"
   },
   "fields": {
@@ -48,8 +46,6 @@
     "address": "Address",
     "phone": "Phone",
     "email": "Email",
-    "latitude": "Latitude",
-    "longitude": "Longitude",
     "notes": "Notes",
     "createdAt": "Created"
   }

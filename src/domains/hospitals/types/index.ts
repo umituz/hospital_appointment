@@ -4,8 +4,6 @@ export interface Hospital {
   address: string;
   phone?: string;
   email?: string;
-  latitude?: number;
-  longitude?: number;
   notes?: string;
   created_at?: string;
   updated_at?: string;
@@ -16,8 +14,10 @@ export interface HospitalFormData {
   address: string;
   phone: string;
   email: string;
-  latitude: number;
-  longitude: number;
   notes: string;
 }
 
+export const getGoogleMapsUrl = (address: string): string => {
+  const encodedAddress = encodeURIComponent(address);
+  return `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+};

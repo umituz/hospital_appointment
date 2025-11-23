@@ -62,30 +62,6 @@ export const HospitalFormFields: React.FC<HospitalFormFieldsProps> = ({
         style={styles.input}
       />
 
-      <AtomicInput
-        label={t("hospitals.fields.latitude")}
-        placeholder={t("hospitals.placeholders.latitude") || "Enter latitude"}
-        value={formData.latitude.toString()}
-        onChangeText={(text: string) =>
-          onUpdateField("latitude", parseFloat(text) || 0)
-        }
-        variant="outlined"
-        keyboardType="decimal-pad"
-        style={styles.input}
-      />
-
-      <AtomicInput
-        label={t("hospitals.fields.longitude")}
-        placeholder={t("hospitals.placeholders.longitude") || "Enter longitude"}
-        value={formData.longitude.toString()}
-        onChangeText={(text: string) =>
-          onUpdateField("longitude", parseFloat(text) || 0)
-        }
-        variant="outlined"
-        keyboardType="decimal-pad"
-        style={styles.input}
-      />
-
       <AtomicTextArea
         label={t("hospitals.fields.notes")}
         placeholder={t("hospitals.placeholders.notes") || "Additional notes"}
