@@ -1,13 +1,14 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { DoctorRepository } from "../infrastructure/repositories";
 import { Doctor } from "../types";
+import { storageService } from "../../storage/infrastructure/services";
 
 export function useDoctor(id: string | undefined) {
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const repository = useMemo(() => new DoctorRepository(), []);
+  const repository = new DoctorRepository(storageService);
 
   useEffect(() => {
     if (!id) {

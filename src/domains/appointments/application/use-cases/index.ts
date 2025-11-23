@@ -16,6 +16,12 @@ export type {
   DeleteAppointmentOutput,
 } from "./DeleteAppointmentUseCase";
 
+export { GetAppointmentUseCase } from "./GetAppointmentUseCase";
+export type {
+  GetAppointmentInput,
+  GetAppointmentOutput,
+} from "./GetAppointmentUseCase";
+
 export { GetAppointmentsUseCase } from "./GetAppointmentsUseCase";
 export type {
   GetAppointmentsInput,

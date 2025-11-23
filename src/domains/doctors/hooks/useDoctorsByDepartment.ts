@@ -1,13 +1,14 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { DoctorRepository } from "../infrastructure/repositories";
 import { Doctor } from "../types";
+import { storageService } from "../../storage/infrastructure/services";
 
 export function useDoctorsByDepartment(departmentId?: string) {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const repository = useMemo(() => new DoctorRepository(), []);
+  const repository = new DoctorRepository(storageService);
 
   const fetchDoctors = useCallback(async () => {
     if (!departmentId) {

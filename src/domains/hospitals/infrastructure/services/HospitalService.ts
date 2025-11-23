@@ -1,27 +1,38 @@
-import { HospitalRepository } from '../repositories';
-import { HospitalValidationService } from '../../utils/validation';
-import { HospitalFormData } from '../../types';
+import { HospitalRepository } from "../repositories";
+import { HospitalValidationService } from "../../utils/validation";
+import { HospitalFormData } from "../../types";
+import { storageService } from "../../../storage/infrastructure/services";
 
 export class HospitalService {
   private hospitalRepository: HospitalRepository;
 
   constructor() {
-    this.hospitalRepository = new HospitalRepository();
+    this.hospitalRepository = new HospitalRepository(storageService);
   }
 
-  async createHospital(data: HospitalFormData, t: (key: string) => string): Promise<void> {
+  async createHospital(
+    data: HospitalFormData,
+    t: (key: string) => string,
+  ): Promise<void> {
     const validation = HospitalValidationService.validateFormData(data, t);
     if (!validation.isValid) {
-      throw new Error(validation.errors.join(', '));
+      throw new Error(validation.errors.join(", "));
     }
 
     await this.hospitalRepository.create(data);
   }
 
-  async updateHospital(id: string, data: Partial<HospitalFormData>, t: (key: string) => string): Promise<void> {
-    const validation = HospitalValidationService.validateFormData(data as HospitalFormData, t);
+  async updateHospital(
+    id: string,
+    data: Partial<HospitalFormData>,
+    t: (key: string) => string,
+  ): Promise<void> {
+    const validation = HospitalValidationService.validateFormData(
+      data as HospitalFormData,
+      t,
+    );
     if (!validation.isValid) {
-      throw new Error(validation.errors.join(', '));
+      throw new Error(validation.errors.join(", "));
     }
 
     await this.hospitalRepository.update(id, data);
@@ -31,4 +42,3 @@ export class HospitalService {
     await this.hospitalRepository.delete(id);
   }
 }
-

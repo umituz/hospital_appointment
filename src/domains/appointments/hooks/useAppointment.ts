@@ -1,13 +1,21 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { AppointmentRepository } from "../infrastructure/repositories";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Appointment } from "../types";
+import {
+  GetAppointmentUseCase,
+  GetAppointmentInput,
+} from "../application/use-cases";
+import { AppointmentRepository } from "../infrastructure/repositories";
+import { storageService } from "../../storage/infrastructure/services";
 
 export function useAppointment(id: string | undefined) {
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const repository = useMemo(() => new AppointmentRepository(), []);
+  const useCase = useMemo(
+    () => new GetAppointmentUseCase(new AppointmentRepository(storageService)),
+    [],
+  );
 
   const fetchAppointment = useCallback(async () => {
     if (!id) {
@@ -18,8 +26,18 @@ export function useAppointment(id: string | undefined) {
     try {
       setIsLoading(true);
       setError(null);
-      const data = await repository.getById(id);
-      setAppointment(data);
+
+      const input: GetAppointmentInput = {
+        id,
+      };
+
+      const result = await useCase.execute(input);
+
+      if (!result.success) {
+        throw new Error("Failed to fetch appointment");
+      }
+
+      setAppointment(result.appointment);
     } catch (err) {
       setError(
         err instanceof Error ? err : new Error("Failed to fetch appointment"),
@@ -27,7 +45,7 @@ export function useAppointment(id: string | undefined) {
     } finally {
       setIsLoading(false);
     }
-  }, [id, repository]);
+  }, [id, useCase]);
 
   useEffect(() => {
     fetchAppointment();

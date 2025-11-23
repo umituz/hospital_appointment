@@ -1,12 +1,13 @@
 import { DoctorRepository } from "../repositories";
 import { DoctorValidationService } from "../../utils/validation";
 import { DoctorFormData } from "../../types";
+import { storageService } from "../../../storage/infrastructure/services";
 
 export class DoctorService {
   private doctorRepository: DoctorRepository;
 
   constructor() {
-    this.doctorRepository = new DoctorRepository();
+    this.doctorRepository = new DoctorRepository(storageService);
   }
 
   async createDoctor(

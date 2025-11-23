@@ -24,52 +24,14 @@ export const AppointmentsScreen: React.FC = () => {
   const { t } = useLocalization();
   const { navigateToCreate, navigateToEdit, navigateToDetail } =
     useAppointmentNavigation();
-  const { appointments, isLoading, refetch } = useAppointments();
-  const { deleteAppointment } = useDeleteAppointment();
+  const { appointments, isLoading, refetch, handleDeleteAppointment } =
+    useAppointments();
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => null,
     });
   }, [navigation]);
-
-  const handleDeleteAppointment = useCallback(
-    (id: string) => {
-      Alert.alert(
-        t("general.delete") || "Delete",
-        t("appointments.deleteConfirm") ||
-          "Are you sure you want to delete this appointment?",
-        [
-          {
-            text: t("general.cancel") || "Cancel",
-            style: "cancel",
-          },
-          {
-            text: t("general.delete") || "Delete",
-            style: "destructive",
-            onPress: async () => {
-              const success = await deleteAppointment(id);
-              if (success) {
-                Alert.alert(
-                  t("general.success") || "Success",
-                  t("appointments.messages.deleted") ||
-                    "Appointment deleted successfully",
-                );
-                refetch();
-              } else {
-                Alert.alert(
-                  t("general.error") || "Error",
-                  t("appointments.errors.deleteFailed") ||
-                    "Failed to delete appointment",
-                );
-              }
-            },
-          },
-        ],
-      );
-    },
-    [deleteAppointment, refetch, t],
-  );
 
   const fetchAppointmentsPage = async (
     page: number,

@@ -28,8 +28,8 @@ export const CreateAppointmentScreen: React.FC = () => {
     setShowHospitalPicker,
     setShowDepartmentPicker,
     setShowDoctorPicker,
-    onSelectHospital,
-    onSelectDepartment,
+    handleSelectHospital,
+    handleSelectDepartment,
     onSelectDoctor,
     handleDateSelect,
     handleTimeSelect,
@@ -38,23 +38,6 @@ export const CreateAppointmentScreen: React.FC = () => {
   const { hospitals } = useHospitals();
   const { departments } = useDepartments(formData.hospital_id);
   const { doctors } = useDoctors(formData.department_id);
-
-  const handleSelectHospital = useCallback(
-    (hospitalId: string) => {
-      onSelectHospital(hospitalId);
-      updateFormData("department_id", "");
-      updateFormData("doctor_id", "");
-    },
-    [onSelectHospital, updateFormData],
-  );
-
-  const handleSelectDepartment = useCallback(
-    (departmentId: string) => {
-      onSelectDepartment(departmentId);
-      updateFormData("doctor_id", "");
-    },
-    [onSelectDepartment, updateFormData],
-  );
 
   return (
     <ScreenLayout scrollable={false}>

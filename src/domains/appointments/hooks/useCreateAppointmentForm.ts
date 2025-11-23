@@ -44,6 +44,23 @@ export function useCreateAppointmentForm() {
     [updateFormData],
   );
 
+  const handleSelectHospital = useCallback(
+    (hospitalId: string) => {
+      onSelectHospital(hospitalId);
+      updateFormData("department_id", "");
+      updateFormData("doctor_id", "");
+    },
+    [onSelectHospital, updateFormData],
+  );
+
+  const handleSelectDepartment = useCallback(
+    (departmentId: string) => {
+      onSelectDepartment(departmentId);
+      updateFormData("doctor_id", "");
+    },
+    [onSelectDepartment, updateFormData],
+  );
+
   const handleSubmit = useCallback(async () => {
     const success = await create(formData);
     if (success) {
@@ -84,6 +101,8 @@ export function useCreateAppointmentForm() {
     onSelectHospital,
     onSelectDepartment,
     onSelectDoctor,
+    handleSelectHospital,
+    handleSelectDepartment,
     handleDateSelect,
     handleTimeSelect,
   };

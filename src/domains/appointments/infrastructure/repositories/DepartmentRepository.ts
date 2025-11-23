@@ -76,7 +76,10 @@ export class DepartmentRepository {
     const { HospitalRepository } = await import(
       "../../../hospitals/infrastructure/repositories"
     );
-    const hospitalRepo = new HospitalRepository();
+    const { storageService } = await import(
+      "../../../storage/infrastructure/services"
+    );
+    const hospitalRepo = new HospitalRepository(storageService);
     return hospitalRepo.getAll();
   }
 
