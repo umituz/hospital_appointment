@@ -1,13 +1,20 @@
-import { useState, useCallback } from "react";
-import { useStorage } from "@umituz/react-native-storage";
-import { Appointment } from "../types";
-
-const STORAGE_KEY = "@hospital_appointment:appointments";
+import { useState, useCallback, useMemo } from "react";
+import {
+  DeleteAppointmentUseCase,
+  DeleteAppointmentInput,
+} from "../application/use-cases";
+import { AppointmentRepository } from "../infrastructure/repositories";
+import { storageService } from "../../storage/infrastructure/services";
 
 export function useDeleteAppointment() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const { getItem, setItem } = useStorage();
+
+  const useCase = useMemo(
+    () =>
+      new DeleteAppointmentUseCase(new AppointmentRepository(storageService)),
+    [],
+  );
 
   const deleteAppointment = useCallback(
     async (id: string) => {
@@ -15,20 +22,13 @@ export function useDeleteAppointment() {
         setIsLoading(true);
         setError(null);
 
-        // Get existing appointments
-        const appointments = await getItem<Appointment[]>(STORAGE_KEY, []);
+        const input: DeleteAppointmentInput = {
+          id,
+        };
 
-        // Find and remove appointment
-        const filteredAppointments = appointments.filter((a) => a.id !== id);
+        const result = await useCase.execute(input);
 
-        if (filteredAppointments.length === appointments.length) {
-          throw new Error("Appointment not found");
-        }
-
-        // Save to storage
-        const success = await setItem(STORAGE_KEY, filteredAppointments);
-
-        if (!success) {
+        if (!result.success) {
           throw new Error("Failed to delete appointment");
         }
 
@@ -44,7 +44,7 @@ export function useDeleteAppointment() {
         setIsLoading(false);
       }
     },
-    [getItem, setItem],
+    [useCase],
   );
 
   return {

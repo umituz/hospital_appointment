@@ -1,23 +1,32 @@
 import { Hospital, HospitalFormData } from "../../types";
-import { storageService } from "../../../storage/infrastructure/services";
+import { IHospitalRepository } from "../../application/ports/IHospitalRepository";
+import { IStorageService } from "../../../storage/application/ports/IStorageService";
 
 const STORAGE_KEY = "@hospital_appointment:hospitals";
 const MIGRATION_FLAG_KEY = "@hospital_appointment:hospitals_migrated";
 
 const OLD_MOCK_HOSPITAL_IDS = ["1", "2", "3", "4"];
 
-export class HospitalRepository {
+export class HospitalRepository implements IHospitalRepository {
+  constructor(private readonly storageService: IStorageService) {}
+
   private async getAllFromStorage(): Promise<Hospital[]> {
-    const hospitals = await storageService.getItem<Hospital[]>(STORAGE_KEY, []);
+    const hospitals = await this.storageService.getItem<Hospital[]>(
+      STORAGE_KEY,
+      [],
+    );
     return hospitals || [];
   }
 
   private async saveToStorage(hospitals: Hospital[]): Promise<void> {
-    await storageService.setItem(STORAGE_KEY, hospitals);
+    const success = await this.storageService.setItem(STORAGE_KEY, hospitals);
+    if (!success) {
+      throw new Error("Failed to save hospitals to storage");
+    }
   }
 
   private async isMigrated(): Promise<boolean> {
-    const migrated = await storageService.getItem<boolean>(
+    const migrated = await this.storageService.getItem<boolean>(
       MIGRATION_FLAG_KEY,
       false,
     );
@@ -25,7 +34,10 @@ export class HospitalRepository {
   }
 
   private async markAsMigrated(): Promise<void> {
-    await storageService.setItem(MIGRATION_FLAG_KEY, true);
+    const success = await this.storageService.setItem(MIGRATION_FLAG_KEY, true);
+    if (!success) {
+      throw new Error("Failed to mark hospitals as migrated");
+    }
   }
 
   private async clearOldMockData(): Promise<void> {

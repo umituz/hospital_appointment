@@ -1,11 +1,13 @@
+import { IStorageService } from "../../../storage/application/ports/IStorageService";
 import { Appointment } from "../../types";
-import { storageService } from "../../../storage/infrastructure/services";
 
 const STORAGE_KEY = "@hospital_appointment:appointments";
 
 export class AppointmentStorageRepository {
+  constructor(private readonly storageService: IStorageService) {}
+
   async getAll(): Promise<Appointment[]> {
-    const appointments = await storageService.getItem<Appointment[]>(
+    const appointments = await this.storageService.getItem<Appointment[]>(
       STORAGE_KEY,
       [],
     );
@@ -13,7 +15,13 @@ export class AppointmentStorageRepository {
   }
 
   async saveAll(appointments: Appointment[]): Promise<void> {
-    await storageService.setItem(STORAGE_KEY, appointments);
+    const success = await this.storageService.setItem(
+      STORAGE_KEY,
+      appointments,
+    );
+    if (!success) {
+      throw new Error("Failed to save appointments to storage");
+    }
   }
 
   async getById(id: string): Promise<Appointment | null> {

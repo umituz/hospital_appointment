@@ -1,16 +1,23 @@
-import { useState, useCallback } from "react";
-import { useStorage } from "@umituz/react-native-storage";
-import { AppointmentFormData, Appointment } from "../types";
+import { useState, useCallback, useMemo } from "react";
+import { AppointmentFormData } from "../types";
 import { useLocalization } from "@umituz/react-native-localization";
-import { AppointmentValidationService } from "../utils/validation";
-
-const STORAGE_KEY = "@hospital_appointment:appointments";
+import {
+  CreateAppointmentUseCase,
+  CreateAppointmentInput,
+} from "../application/use-cases";
+import { AppointmentRepository } from "../infrastructure/repositories";
+import { storageService } from "../../storage/infrastructure/services";
 
 export function useCreateAppointment() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { t } = useLocalization();
-  const { getItem, setItem } = useStorage();
+
+  const useCase = useMemo(
+    () =>
+      new CreateAppointmentUseCase(new AppointmentRepository(storageService)),
+    [],
+  );
 
   const create = useCallback(
     async (data: AppointmentFormData) => {
@@ -18,36 +25,15 @@ export function useCreateAppointment() {
         setIsLoading(true);
         setError(null);
 
-        // Validate data
-        const validation = AppointmentValidationService.validateFormData(
+        const input: CreateAppointmentInput = {
           data,
           t,
-        );
-        if (!validation.isValid) {
-          throw new Error(validation.errors.join(", "));
-        }
-
-        // Get existing appointments
-        const appointments = await getItem<Appointment[]>(STORAGE_KEY, []);
-
-        // Create new appointment
-        const newAppointment: Appointment = {
-          ...data,
-          hospital_name: "", // Will be enriched by enrichment service if needed
-          department_name: "",
-          doctor_name: "",
-          id: Date.now().toString(),
-          status: "scheduled",
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
         };
 
-        // Save to storage
-        appointments.push(newAppointment);
-        const success = await setItem(STORAGE_KEY, appointments);
+        const result = await useCase.execute(input);
 
-        if (!success) {
-          throw new Error("Failed to save appointment");
+        if (!result.success) {
+          throw new Error(result.errors?.join(", ") || "Validation failed");
         }
 
         return true;
@@ -62,7 +48,7 @@ export function useCreateAppointment() {
         setIsLoading(false);
       }
     },
-    [t, getItem, setItem],
+    [t, useCase],
   );
 
   return {

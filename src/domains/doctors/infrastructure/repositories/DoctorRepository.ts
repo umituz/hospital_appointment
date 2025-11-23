@@ -1,16 +1,25 @@
 import { Doctor, DoctorFormData } from "../../types";
-import { storageService } from "../../../storage/infrastructure/services";
+import { IDoctorRepository } from "../../application/ports/IDoctorRepository";
+import { IStorageService } from "../../../storage/application/ports/IStorageService";
 
 const STORAGE_KEY = "@hospital_appointment:doctors";
 
-export class DoctorRepository {
+export class DoctorRepository implements IDoctorRepository {
+  constructor(private readonly storageService: IStorageService) {}
+
   private async getAllFromStorage(): Promise<Doctor[]> {
-    const doctors = await storageService.getItem<Doctor[]>(STORAGE_KEY, []);
+    const doctors = await this.storageService.getItem<Doctor[]>(
+      STORAGE_KEY,
+      [],
+    );
     return doctors || [];
   }
 
   private async saveToStorage(doctors: Doctor[]): Promise<void> {
-    await storageService.setItem(STORAGE_KEY, doctors);
+    const success = await this.storageService.setItem(STORAGE_KEY, doctors);
+    if (!success) {
+      throw new Error("Failed to save doctors to storage");
+    }
   }
 
   private generateId(): string {
@@ -62,23 +71,16 @@ export class DoctorRepository {
   }
 
   async create(data: DoctorFormData): Promise<Doctor> {
-    try {
-      const doctors = await this.getAllFromStorage();
-      const newDoctor: Doctor = {
-        ...data,
-        id: this.generateId(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      doctors.push(newDoctor);
-      await this.saveToStorage(doctors);
-      return newDoctor;
-    } catch (error) {
-      /* eslint-disable-next-line no-console */
-      if (__DEV__)
-        console.error("[DoctorRepository] Error creating doctor:", error);
-      throw new Error("Failed to create doctor");
-    }
+    const doctors = await this.getAllFromStorage();
+    const newDoctor: Doctor = {
+      ...data,
+      id: this.generateId(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    doctors.push(newDoctor);
+    await this.saveToStorage(doctors);
+    return newDoctor;
   }
 
   async update(id: string, data: Partial<DoctorFormData>): Promise<Doctor> {

@@ -1,18 +1,22 @@
-import { useState, useCallback } from "react";
-import { useStorage } from "@umituz/react-native-storage";
-import { HospitalFormData, Hospital } from "../types";
+import { useState, useCallback, useMemo } from "react";
+import { HospitalFormData } from "../types";
 import { useLocalization } from "@umituz/react-native-localization";
-import { HospitalValidationService } from "../utils/validation";
-
-const STORAGE_KEY = "@hospital_appointment:hospitals";
-const MIGRATION_FLAG_KEY = "@hospital_appointment:hospitals_migrated";
-const OLD_MOCK_HOSPITAL_IDS = ["1", "2", "3", "4"];
+import {
+  CreateHospitalUseCase,
+  CreateHospitalInput,
+} from "../application/use-cases";
+import { HospitalRepository } from "../infrastructure/repositories";
+import { storageService } from "../../storage/infrastructure/services";
 
 export function useCreateHospital() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { t } = useLocalization();
-  const { getItem, setItem } = useStorage();
+
+  const useCase = useMemo(
+    () => new CreateHospitalUseCase(new HospitalRepository(storageService)),
+    [],
+  );
 
   const create = useCallback(
     async (data: HospitalFormData) => {
@@ -20,41 +24,15 @@ export function useCreateHospital() {
         setIsLoading(true);
         setError(null);
 
-        // Validate data
-        const validation = HospitalValidationService.validateFormData(data, t);
-        if (!validation.isValid) {
-          throw new Error(validation.errors.join(", "));
-        }
-
-        // Check migration and clear old mock data if needed
-        const migrated = await getItem<boolean>(MIGRATION_FLAG_KEY, false);
-        let hospitals = await getItem<Hospital[]>(STORAGE_KEY, []);
-
-        if (!migrated) {
-          const hasOldMockData = hospitals.some((h) =>
-            OLD_MOCK_HOSPITAL_IDS.includes(h.id),
-          );
-          if (hasOldMockData) {
-            hospitals = [];
-            await setItem(STORAGE_KEY, hospitals);
-            await setItem(MIGRATION_FLAG_KEY, true);
-          }
-        }
-
-        // Create new hospital
-        const newHospital: Hospital = {
-          ...data,
-          id: Date.now().toString(),
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+        const input: CreateHospitalInput = {
+          data,
+          t,
         };
 
-        // Save to storage
-        hospitals.push(newHospital);
-        const success = await setItem(STORAGE_KEY, hospitals);
+        const result = await useCase.execute(input);
 
-        if (!success) {
-          throw new Error("Failed to save hospital");
+        if (!result.success) {
+          throw new Error(result.errors?.join(", ") || "Validation failed");
         }
 
         return true;
@@ -67,7 +45,7 @@ export function useCreateHospital() {
         setIsLoading(false);
       }
     },
-    [t, getItem, setItem],
+    [t, useCase],
   );
 
   return {

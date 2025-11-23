@@ -1,16 +1,22 @@
-import { useState, useCallback } from "react";
-import { useStorage } from "@umituz/react-native-storage";
-import { DoctorFormData, Doctor } from "../types";
+import { useState, useCallback, useMemo } from "react";
+import { DoctorFormData } from "../types";
 import { useLocalization } from "@umituz/react-native-localization";
-import { DoctorValidationService } from "../utils/validation";
-
-const STORAGE_KEY = "@hospital_appointment:doctors";
+import {
+  CreateDoctorUseCase,
+  CreateDoctorInput,
+} from "../application/use-cases";
+import { DoctorRepository } from "../infrastructure/repositories";
+import { storageService } from "../../storage/infrastructure/services";
 
 export function useCreateDoctor() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { t } = useLocalization();
-  const { getItem, setItem } = useStorage();
+
+  const useCase = useMemo(
+    () => new CreateDoctorUseCase(new DoctorRepository(storageService)),
+    [],
+  );
 
   const create = useCallback(
     async (data: DoctorFormData) => {
@@ -18,29 +24,15 @@ export function useCreateDoctor() {
         setIsLoading(true);
         setError(null);
 
-        // Validate data
-        const validation = DoctorValidationService.validateFormData(data, t);
-        if (!validation.isValid) {
-          throw new Error(validation.errors.join(", "));
-        }
-
-        // Get existing doctors
-        const doctors = await getItem<Doctor[]>(STORAGE_KEY, []);
-
-        // Create new doctor
-        const newDoctor: Doctor = {
-          ...data,
-          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+        const input: CreateDoctorInput = {
+          data,
+          t,
         };
 
-        // Save to storage
-        doctors.push(newDoctor);
-        const success = await setItem(STORAGE_KEY, doctors);
+        const result = await useCase.execute(input);
 
-        if (!success) {
-          throw new Error("Failed to save doctor");
+        if (!result.success) {
+          throw new Error(result.errors?.join(", ") || "Validation failed");
         }
 
         return true;
@@ -53,7 +45,7 @@ export function useCreateDoctor() {
         setIsLoading(false);
       }
     },
-    [t, getItem, setItem],
+    [t, useCase],
   );
 
   return {

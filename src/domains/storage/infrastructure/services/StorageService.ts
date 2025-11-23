@@ -1,7 +1,11 @@
-import { storageRepository, unwrap } from '@umituz/react-native-storage';
+import { storageRepository, unwrap } from "@umituz/react-native-storage";
+import { IStorageService } from "../../application/ports/IStorageService";
 
-export class StorageService {
-  async getItem<T>(key: string, defaultValue: T | null = null): Promise<T | null> {
+export class StorageService implements IStorageService {
+  async getItem<T>(
+    key: string,
+    defaultValue: T | null = null,
+  ): Promise<T | null> {
     try {
       const result = await storageRepository.getItem(key, defaultValue);
       return unwrap(result, defaultValue);
@@ -12,45 +16,38 @@ export class StorageService {
     }
   }
 
-  async setItem<T>(key: string, value: T): Promise<void> {
+  async setItem<T>(key: string, value: T): Promise<boolean> {
     try {
       const result = await storageRepository.setItem(key, value);
-      if (!result.success) {
-        throw new Error(result.error?.message || 'Failed to set item');
-      }
+      return result.success;
     } catch (error) {
       /* eslint-disable-next-line no-console */
       if (__DEV__) console.error(`Error setting storage key "${key}":`, error);
-      throw error;
+      return false;
     }
   }
 
-  async removeItem(key: string): Promise<void> {
+  async removeItem(key: string): Promise<boolean> {
     try {
       const result = await storageRepository.removeItem(key);
-      if (!result.success) {
-        throw new Error(result.error?.message || 'Failed to remove item');
-      }
+      return result.success;
     } catch (error) {
       /* eslint-disable-next-line no-console */
       if (__DEV__) console.error(`Error removing storage key "${key}":`, error);
-      throw error;
+      return false;
     }
   }
 
-  async clear(): Promise<void> {
+  async clear(): Promise<boolean> {
     try {
       const result = await storageRepository.clearAll();
-      if (!result.success) {
-        throw new Error(result.error?.message || 'Failed to clear storage');
-      }
+      return result.success;
     } catch (error) {
       /* eslint-disable-next-line no-console */
-      if (__DEV__) console.error('Error clearing storage:', error);
-      throw error;
+      if (__DEV__) console.error("Error clearing storage:", error);
+      return false;
     }
   }
 }
 
 export const storageService = new StorageService();
-

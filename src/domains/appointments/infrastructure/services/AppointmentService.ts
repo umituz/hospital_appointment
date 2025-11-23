@@ -2,13 +2,14 @@ import { AppointmentRepository } from "../repositories";
 import { AppointmentEnrichmentService } from "./AppointmentEnrichmentService";
 import { AppointmentValidationService } from "../../utils/validation";
 import { AppointmentFormData, Appointment } from "../../types";
+import { storageService } from "../../../storage/infrastructure/services";
 
 export class AppointmentService {
   private appointmentRepository: AppointmentRepository;
   private enrichmentService: AppointmentEnrichmentService;
 
   constructor() {
-    this.appointmentRepository = new AppointmentRepository();
+    this.appointmentRepository = new AppointmentRepository(storageService);
     this.enrichmentService = new AppointmentEnrichmentService();
   }
 

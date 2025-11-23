@@ -1,16 +1,23 @@
-import { useState, useCallback } from "react";
-import { useStorage } from "@umituz/react-native-storage";
-import { AppointmentFormData, Appointment } from "../types";
+import { useState, useCallback, useMemo } from "react";
+import { AppointmentFormData } from "../types";
 import { useLocalization } from "@umituz/react-native-localization";
-import { AppointmentValidationService } from "../utils/validation";
-
-const STORAGE_KEY = "@hospital_appointment:appointments";
+import {
+  UpdateAppointmentUseCase,
+  UpdateAppointmentInput,
+} from "../application/use-cases";
+import { AppointmentRepository } from "../infrastructure/repositories";
+import { storageService } from "../../storage/infrastructure/services";
 
 export function useUpdateAppointment() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { t } = useLocalization();
-  const { getItem, setItem } = useStorage();
+
+  const useCase = useMemo(
+    () =>
+      new UpdateAppointmentUseCase(new AppointmentRepository(storageService)),
+    [],
+  );
 
   const update = useCallback(
     async (id: string, data: AppointmentFormData) => {
@@ -18,41 +25,16 @@ export function useUpdateAppointment() {
         setIsLoading(true);
         setError(null);
 
-        // Validate data
-        const validation = AppointmentValidationService.validateFormData(
+        const input: UpdateAppointmentInput = {
+          id,
           data,
           t,
-        );
-        if (!validation.isValid) {
-          throw new Error(validation.errors.join(", "));
-        }
-
-        // Get existing appointments
-        const appointments = await getItem<Appointment[]>(STORAGE_KEY, []);
-
-        // Find and update appointment
-        const index = appointments.findIndex((a) => a.id === id);
-        if (index === -1) {
-          throw new Error("Appointment not found");
-        }
-
-        const updatedAppointment: Appointment = {
-          ...appointments[index],
-          ...data,
-          hospital_name: "", // Will be enriched by enrichment service if needed
-          department_name: "",
-          doctor_name: "",
-          id,
-          updated_at: new Date().toISOString(),
         };
 
-        appointments[index] = updatedAppointment;
+        const result = await useCase.execute(input);
 
-        // Save to storage
-        const success = await setItem(STORAGE_KEY, appointments);
-
-        if (!success) {
-          throw new Error("Failed to update appointment");
+        if (!result.success) {
+          throw new Error(result.errors?.join(", ") || "Validation failed");
         }
 
         return true;
@@ -67,7 +49,7 @@ export function useUpdateAppointment() {
         setIsLoading(false);
       }
     },
-    [t, getItem, setItem],
+    [t, useCase],
   );
 
   return {
