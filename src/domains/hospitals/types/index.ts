@@ -4,6 +4,7 @@ export interface Hospital {
   address: string;
   phone?: string;
   email?: string;
+  googleMapsUrl?: string;
   notes?: string;
   created_at?: string;
   updated_at?: string;
@@ -14,6 +15,7 @@ export interface HospitalFormData {
   address: string;
   phone: string;
   email: string;
+  googleMapsUrl: string;
   notes: string;
 }
 

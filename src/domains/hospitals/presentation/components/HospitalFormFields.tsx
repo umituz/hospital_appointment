@@ -62,6 +62,18 @@ export const HospitalFormFields: React.FC<HospitalFormFieldsProps> = ({
         style={styles.input}
       />
 
+      <AtomicInput
+        label={t("hospitals.fields.googleMapsUrl")}
+        placeholder={
+          t("hospitals.placeholders.googleMapsUrl") || "Enter Google Maps URL"
+        }
+        value={formData.googleMapsUrl}
+        onChangeText={(text: string) => onUpdateField("googleMapsUrl", text)}
+        variant="outlined"
+        autoCapitalize="none"
+        style={styles.input}
+      />
+
       <AtomicTextArea
         label={t("hospitals.fields.notes")}
         placeholder={t("hospitals.placeholders.notes") || "Additional notes"}

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Linking, TouchableOpacity } from "react-native";
 import {
   AtomicText,
   AtomicButton,
@@ -78,6 +78,22 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
                 {hospital.address}
               </AtomicText>
             </View>
+          )}
+
+          {hospital.googleMapsUrl && (
+            <TouchableOpacity
+              style={styles.mapsRow}
+              onPress={() => Linking.openURL(hospital.googleMapsUrl!)}
+            >
+              <AtomicIcon name="Navigation" size="sm" color="primary" />
+              <AtomicText
+                type="bodyMedium"
+                color="primary"
+                style={styles.mapsLink}
+              >
+                Open in Google Maps
+              </AtomicText>
+            </TouchableOpacity>
           )}
           {hospital.phone && (
             <View style={styles.phoneRow}>
@@ -171,6 +187,16 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   address: {
+    flex: 1,
+    marginTop: 0,
+  },
+  mapsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingVertical: 2,
+  },
+  mapsLink: {
     flex: 1,
     marginTop: 0,
   },

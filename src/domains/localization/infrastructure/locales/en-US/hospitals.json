@@ -39,6 +39,7 @@
     "address": "Enter address",
     "phone": "Enter phone number",
     "email": "Enter email address",
+    "googleMapsUrl": "Enter Google Maps URL",
     "notes": "Additional notes"
   },
   "fields": {
@@ -46,6 +47,7 @@
     "address": "Address",
     "phone": "Phone",
     "email": "Email",
+    "googleMapsUrl": "Google Maps URL",
     "notes": "Notes",
     "createdAt": "Created"
   }

@@ -6,7 +6,7 @@ import {
   useAppDesignTokens,
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
-import { Hospital, getGoogleMapsUrl } from "../../types";
+import { Hospital } from "../../types";
 import { AtomicCard } from "@umituz/react-native-design-system-atoms";
 
 interface HospitalDetailInfoProps {
@@ -48,15 +48,15 @@ export const HospitalDetailInfo: React.FC<HospitalDetailInfoProps> = ({
       <InfoRow label={t("hospitals.fields.phone")} value={hospital.phone} />
       <InfoRow label={t("hospitals.fields.email")} value={hospital.email} />
 
-      {hospital.address && (
+      {hospital.googleMapsUrl && (
         <View style={styles.mapsButtonContainer}>
           <AtomicButton
             variant="outline"
             size="md"
-            onPress={() => Linking.openURL(getGoogleMapsUrl(hospital.address))}
+            onPress={() => Linking.openURL(hospital.googleMapsUrl!)}
             style={styles.mapsButton}
           >
-            📍 View on Google Maps
+            📍 Open in Google Maps
           </AtomicButton>
         </View>
       )}

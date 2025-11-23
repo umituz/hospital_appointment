@@ -6,6 +6,7 @@ const initialFormData: HospitalFormData = {
   address: "",
   phone: "",
   email: "",
+  googleMapsUrl: "",
   notes: "",
 };
 
@@ -19,6 +20,7 @@ export function useHospitalForm(hospital?: Hospital) {
         address: hospital.address || "",
         phone: hospital.phone || "",
         email: hospital.email || "",
+        googleMapsUrl: hospital.googleMapsUrl || "",
         notes: hospital.notes || "",
       });
     }
