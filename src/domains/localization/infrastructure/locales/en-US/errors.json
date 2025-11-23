@@ -1,9 +1,3 @@
 {
-  "general": "An error occurred",
-  "network": "Network error. Please check your connection.",
-  "validation": "Please check your input",
-  "notFound": "Item not found",
-  "unauthorized": "Unauthorized access",
-  "forbidden": "Access forbidden"
+  "general": "An error occurred"
 }
-

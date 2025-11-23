@@ -54,14 +54,6 @@
     "longitude": "Enter longitude",
     "notes": "Additional notes"
   },
-  "validation": {
-    "nameRequired": "Hospital name is required",
-    "addressRequired": "Address is required",
-    "emailInvalid": "Please enter a valid email address",
-    "phoneInvalid": "Please enter a valid phone number",
-    "latitudeInvalid": "Latitude must be between -90 and 90",
-    "longitudeInvalid": "Longitude must be between -180 and 180"
-  },
   "fields": {
     "name": "Name",
     "address": "Address",
@@ -71,11 +63,5 @@
     "longitude": "Longitude",
     "notes": "Notes",
     "createdAt": "Created"
-  },
-  "messages": {
-    "created": "Hospital created successfully",
-    "updated": "Hospital updated successfully",
-    "deleted": "Hospital deleted successfully",
-    "deleteConfirm": "Are you sure you want to delete this hospital?"
   }
 }

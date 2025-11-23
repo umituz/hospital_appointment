@@ -39,15 +39,6 @@
     "deleted": "Doctor deleted successfully",
     "deleteConfirm": "Are you sure you want to delete this doctor?"
   },
-  "validation": {
-    "nameRequired": "Doctor name is required",
-    "specialtyRequired": "Specialty field is required",
-    "departmentRequired": "Department selection is required",
-    "emailInvalid": "Please enter a valid email address",
-    "phoneInvalid": "Please enter a valid phone number",
-    "ratingInvalid": "Rating must be between 0 and 5",
-    "experienceInvalid": "Experience years cannot be negative"
-  },
   "errors": {
     "idRequired": "Doctor ID is required",
     "createFailed": "Failed to create doctor",

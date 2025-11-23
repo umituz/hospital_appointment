@@ -7,16 +7,12 @@
   "save": "Save",
   "delete": "Delete",
   "edit": "Edit",
-  "add": "Add",
-  "close": "Close",
-  "back": "Back",
-  "next": "Next",
-  "previous": "Previous",
-  "done": "Done",
-  "restart": "Restart",
   "search": "Search",
   "filter": "Filter",
-  "sort": "Sort",
   "noResults": "No results found",
-  "noData": "No data available"
+  "noData": "No data available",
+  "createdAt": "Created at",
+  "updatedAt": "Updated at",
+  "success": "Success",
+  "ok": "OK"
 }
