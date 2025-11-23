@@ -19,7 +19,6 @@ interface DoctorFilterChipsProps {
   onSpecialtySelect: (specialty: string | null) => void;
   selectedHospital: string | null;
   onHospitalSelect: (hospital: string | null) => void;
-  onAvailableTodayPress: () => void;
   departments?: Department[];
 }
 
@@ -29,7 +28,6 @@ export const DoctorFilterChips: React.FC<DoctorFilterChipsProps> = ({
   onSpecialtySelect,
   selectedHospital,
   onHospitalSelect,
-  onAvailableTodayPress,
   departments = [],
 }) => {
   const tokens = useAppDesignTokens();
@@ -122,20 +120,6 @@ export const DoctorFilterChips: React.FC<DoctorFilterChipsProps> = ({
               style={styles.chip}
             >
               {t("doctors.filters.hospital") || "Hospital"}
-            </AtomicButton>
-            <View style={styles.iconContainer}>
-              <AtomicIcon name="ChevronDown" size="sm" color="secondary" />
-            </View>
-          </View>
-
-          <View style={styles.chipContainer}>
-            <AtomicButton
-              variant="outline"
-              size="sm"
-              onPress={onAvailableTodayPress}
-              style={styles.chip}
-            >
-              {t("doctors.filters.availableToday") || "Available Today"}
             </AtomicButton>
             <View style={styles.iconContainer}>
               <AtomicIcon name="ChevronDown" size="sm" color="secondary" />

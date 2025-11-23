@@ -6,3 +6,5 @@ export { DoctorSearchBar } from "./DoctorSearchBar";
 export { DoctorFilterChips } from "./DoctorFilterChips";
 export { DoctorDetailHeader } from "./DoctorDetailHeader";
 export { DoctorDetailInfo } from "./DoctorDetailInfo";
+export { DoctorsListHeader } from "./DoctorsListHeader";
+export { FilterIndicator } from "./FilterIndicator";
