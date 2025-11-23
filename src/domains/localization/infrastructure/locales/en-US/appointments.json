@@ -38,13 +38,11 @@
     "time": "Time",
     "patientName": "Patient Name",
     "patientPhone": "Patient Phone",
-    "notes": "Notes",
-    "reminder": "Reminder"
+    "notes": "Notes"
   },
   "detail": {
     "title": "Appointment Details",
-    "information": "Appointment Information",
-    "minutesBefore": "minutes before"
+    "information": "Appointment Information"
   },
   "placeholders": {
     "selectHospital": "Select Hospital",

@@ -13,8 +13,6 @@ const initialFormData: AppointmentFormData = {
   patient_name: "",
   patient_phone: "",
   notes: "",
-  reminder_enabled: true,
-  reminder_time: 60,
 };
 
 export function useAppointmentForm(appointment?: Appointment) {
@@ -36,8 +34,6 @@ export function useAppointmentForm(appointment?: Appointment) {
         patient_name: appointment.patient_name || "",
         patient_phone: appointment.patient_phone || "",
         notes: appointment.notes || "",
-        reminder_enabled: appointment.reminder_enabled ?? true,
-        reminder_time: appointment.reminder_time || 60,
       });
     }
   }, [appointment]);

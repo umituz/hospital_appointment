@@ -14,8 +14,6 @@ export interface Appointment {
   patient_name: string;
   patient_phone?: string;
   notes?: string;
-  reminder_enabled: boolean;
-  reminder_time: number;
   status?: AppointmentStatus;
   hospital_name?: string;
   department_name?: string;
@@ -41,8 +39,6 @@ export interface AppointmentFormData {
   patient_name: string;
   patient_phone: string;
   notes: string;
-  reminder_enabled: boolean;
-  reminder_time: number;
 }
 
 export interface Department {

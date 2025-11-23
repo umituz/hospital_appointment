@@ -9,7 +9,6 @@ import { DepartmentPickerField } from "./DepartmentPickerField";
 import { DoctorPickerField } from "./DoctorPickerField";
 import { DateTimeFields } from "./DateTimeFields";
 import { PatientFields } from "./PatientFields";
-import { ReminderFields } from "./ReminderFields";
 
 interface AppointmentFormFieldsProps {
   formData: AppointmentFormData;
@@ -92,12 +91,6 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
         patientName={formData.patient_name}
         patientPhone={formData.patient_phone}
         notes={formData.notes}
-        onUpdateField={onUpdateField}
-      />
-
-      <ReminderFields
-        reminderEnabled={formData.reminder_enabled}
-        reminderTime={formData.reminder_time}
         onUpdateField={onUpdateField}
       />
     </View>
