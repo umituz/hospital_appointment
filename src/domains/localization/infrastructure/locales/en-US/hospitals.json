@@ -1,6 +1,8 @@
 {
   "search": {
-    "placeholder": "Search by name, address, phone..."
+    "placeholder": "Search by name, address, phone...",
+    "noResults": "No hospitals found",
+    "noResultsDescription": "Try adjusting your search terms or add a new hospital."
   },
   "card": {
     "edit": "Edit Hospital",

@@ -22,12 +22,6 @@ export const SettingsScreen: React.FC = () => {
             title={t("settings.appearance.title")}
             value={t("settings.appearance.description")}
             onPress={() => navigation.navigate("Appearance" as never)}
-          />
-          <SettingItem
-            icon={Palette}
-            title={t("settings.appearance.title")}
-            value={t("settings.appearance.description")}
-            onPress={() => navigation.navigate("Appearance" as never)}
             isLast={true}
           />
         </>
