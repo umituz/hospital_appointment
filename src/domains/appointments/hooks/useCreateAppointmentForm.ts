@@ -19,8 +19,8 @@ export function useCreateAppointmentForm() {
     setShowDepartmentPicker,
     showDoctorPicker,
     setShowDoctorPicker,
-    handleDateSelect,
-    handleTimeSelect,
+    handleDateChange,
+    handleTimeChange,
   } = useAppointmentForm();
 
   const onSelectHospital = useCallback(
@@ -84,7 +84,7 @@ export function useCreateAppointmentForm() {
     onSelectHospital,
     onSelectDepartment,
     onSelectDoctor,
-    handleDateSelect,
-    handleTimeSelect,
+    handleDateChange,
+    handleTimeChange,
   };
 }

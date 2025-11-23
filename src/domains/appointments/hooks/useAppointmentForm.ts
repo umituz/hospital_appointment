@@ -99,6 +99,24 @@ export function useAppointmentForm(appointment?: Appointment) {
     }
   }, [formData.appointment_time, updateFormData, t]);
 
+  const handleDateChange = useCallback(
+    (date: Date) => {
+      // Format date as YYYY-MM-DD string
+      const dateString = date.toISOString().split("T")[0];
+      updateFormData("appointment_date", dateString);
+    },
+    [updateFormData],
+  );
+
+  const handleTimeChange = useCallback(
+    (time: Date) => {
+      // Format time as HH:MM string
+      const timeString = time.toTimeString().slice(0, 5);
+      updateFormData("appointment_time", timeString);
+    },
+    [updateFormData],
+  );
+
   const resetForm = useCallback(() => {
     setFormData(initialFormData);
   }, []);
@@ -113,7 +131,7 @@ export function useAppointmentForm(appointment?: Appointment) {
     setShowDepartmentPicker,
     showDoctorPicker,
     setShowDoctorPicker,
-    handleDateSelect,
-    handleTimeSelect,
+    handleDateChange,
+    handleTimeChange,
   };
 }

@@ -11,7 +11,7 @@ export function useDeleteDoctor() {
   const [error, setError] = useState<Error | null>(null);
 
   const useCase = useMemo(
-    () => new DeleteDoctorUseCase(new DoctorRepository(storageService)),
+    () => new DeleteDoctorUseCase(new DoctorRepository()),
     [],
   );
 

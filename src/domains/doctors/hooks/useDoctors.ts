@@ -21,9 +21,7 @@ export function useDoctors(): UseDoctorsReturn {
       setIsLoading(true);
       setError(null);
 
-      const useCase = new GetDoctorsUseCase(
-        new DoctorRepository(storageService),
-      );
+      const useCase = new GetDoctorsUseCase(new DoctorRepository());
       const input: GetDoctorsInput = {};
       const result = await useCase.execute(input);
 

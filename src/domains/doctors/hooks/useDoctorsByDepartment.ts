@@ -8,7 +8,7 @@ export function useDoctorsByDepartment(departmentId?: string) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const repository = new DoctorRepository(storageService);
+  const repository = new DoctorRepository();
 
   const fetchDoctors = useCallback(async () => {
     if (!departmentId) {

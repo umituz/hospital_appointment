@@ -14,7 +14,7 @@ export function useCreateDoctor() {
   const { t } = useLocalization();
 
   const useCase = useMemo(
-    () => new CreateDoctorUseCase(new DoctorRepository(storageService)),
+    () => new CreateDoctorUseCase(new DoctorRepository()),
     [],
   );
 

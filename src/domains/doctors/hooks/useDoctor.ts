@@ -10,7 +10,7 @@ export function useDoctor(id: string | undefined) {
   const [error, setError] = useState<Error | null>(null);
 
   const useCase = useMemo(
-    () => new GetDoctorUseCase(new DoctorRepository(storageService)),
+    () => new GetDoctorUseCase(new DoctorRepository()),
     [],
   );
 

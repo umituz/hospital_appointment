@@ -5,7 +5,7 @@ export class DoctorDataService {
   private doctorRepository: DoctorRepository;
 
   constructor() {
-    this.doctorRepository = new DoctorRepository(storageService);
+    this.doctorRepository = new DoctorRepository();
   }
 
   async create(data: any): Promise<any> {
