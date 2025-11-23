@@ -9,3 +9,6 @@ export { useDoctorSearch } from "./useDoctorSearch";
 export { useDoctorNavigation } from "./useDoctorNavigation";
 export { useEditDoctorForm } from "./useEditDoctorForm";
 export { useDoctorDepartment } from "./useDoctorDepartment";
+export { useDoctorsList } from "./useDoctorsList";
+export { useDoctorFilters } from "./useDoctorFilters";
+export { useDoctorFilterOptions } from "./useDoctorFilterOptions";

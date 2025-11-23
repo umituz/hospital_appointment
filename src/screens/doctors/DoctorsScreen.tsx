@@ -1,167 +1,64 @@
-import React, { useMemo, useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect } from "react";
 import { View, FlatList, RefreshControl, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenLayout } from "@umituz/react-native-design-system";
 import { AtomicFab } from "@umituz/react-native-design-system-atoms";
-import { SearchBar, useSearch } from "@umituz/react-native-search";
-import { FilterSheet, useListFilters } from "@umituz/react-native-filter";
+import { SearchBar } from "@umituz/react-native-search";
+import { FilterSheet } from "@umituz/react-native-filter";
 import { useLocalization } from "@umituz/react-native-localization";
-import { useDoctors, useDoctorNavigation } from "@/domains/doctors";
+import { useDoctorsList, useDoctorNavigation } from "@/domains/doctors";
 import {
   DoctorCard,
   DoctorsListHeader,
   FilterIndicator,
 } from "@/domains/doctors/presentation/components";
-import { useDepartments } from "@/domains/appointments";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingState } from "@/components/common/LoadingState";
 import type { Doctor } from "@/domains/doctors/types";
-import type { Department } from "@/domains/appointments/types";
 
 export const DoctorsScreen: React.FC = () => {
   const navigation = useNavigation();
   const { t } = useLocalization();
-  const { doctors, isLoading, refetch } = useDoctors();
-  const { departments } = useDepartments(undefined);
   const { navigateToCreate, navigateToEdit, navigateToDetail } =
     useDoctorNavigation();
 
-  const [specialtyFilterVisible, setSpecialtyFilterVisible] = useState(false);
-  const [hospitalFilterVisible, setHospitalFilterVisible] = useState(false);
-  const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(
-    null,
-  );
-  const [selectedHospital, setSelectedHospital] = useState<string | null>(null);
-
-  const { query, setQuery, debouncedQuery } = useSearch({
-    debounceMs: 300,
-  });
-
-  const specialties = useMemo(() => {
-    const unique = new Set(doctors.map((d) => d.specialty).filter(Boolean));
-    return Array.from(unique).sort();
-  }, [doctors]);
-
-  const specialtyOptions = useMemo(
-    () =>
-      specialties.map((specialty) => ({
-        id: specialty,
-        label: specialty,
-      })),
-    [specialties],
-  );
-
-  const hospitalOptions = useMemo(
-    () =>
-      departments.map((dept) => ({
-        id: dept.id.toString(),
-        label: dept.name,
-      })),
-    [departments],
-  );
-
   const {
-    selectedIds: selectedSpecialtyIds,
-    handleFilterPress: handleSpecialtyFilterPress,
-    handleClearFilters: handleClearSpecialtyFilters,
-    activeFilter: activeSpecialtyFilter,
-  } = useListFilters({
-    options: specialtyOptions,
-    defaultFilterId: "",
-    singleSelect: true,
-  });
-
-  const {
-    selectedIds: selectedHospitalIds,
-    handleFilterPress: handleHospitalFilterPress,
-    handleClearFilters: handleClearHospitalFilters,
-    activeFilter: activeHospitalFilter,
-  } = useListFilters({
-    options: hospitalOptions,
-    defaultFilterId: "",
-    singleSelect: true,
-  });
-
-  const filteredDoctors = useMemo(() => {
-    let filtered = doctors;
-
-    if (debouncedQuery.trim()) {
-      const query = debouncedQuery.toLowerCase();
-      filtered = filtered.filter(
-        (doctor) =>
-          doctor.name.toLowerCase().includes(query) ||
-          doctor.specialty?.toLowerCase().includes(query),
-      );
-    }
-
-    if (selectedSpecialty) {
-      filtered = filtered.filter(
-        (doctor) => doctor.specialty === selectedSpecialty,
-      );
-    }
-
-    if (selectedHospital) {
-      filtered = filtered.filter(
-        (doctor) => doctor.department_id === selectedHospital,
-      );
-    }
-
-    return filtered;
-  }, [doctors, debouncedQuery, selectedSpecialty, selectedHospital]);
-
-  const handleSpecialtySelect = (filterId: string) => {
-    handleSpecialtyFilterPress(filterId);
-    setSelectedSpecialty(filterId || null);
-    setSpecialtyFilterVisible(false);
-  };
-
-  const handleHospitalSelect = (filterId: string) => {
-    handleHospitalFilterPress(filterId);
-    setSelectedHospital(filterId || null);
-    setHospitalFilterVisible(false);
-  };
-
-  const handleClearFilters = () => {
-    handleClearSpecialtyFilters();
-    handleClearHospitalFilters();
-    setSelectedSpecialty(null);
-    setSelectedHospital(null);
-    setQuery("");
-  };
-
-  const hasActiveFilter =
-    selectedSpecialty !== null ||
-    selectedHospital !== null ||
-    query.trim() !== "";
-
-  const filterLabels = useMemo(() => {
-    const labels: string[] = [];
-    if (selectedSpecialty) {
-      labels.push(selectedSpecialty);
-    }
-    if (selectedHospital) {
-      const dept = departments.find(
-        (d) => d.id.toString() === selectedHospital,
-      );
-      if (dept) {
-        labels.push(dept.name);
-      }
-    }
-    return labels;
-  }, [selectedSpecialty, selectedHospital, departments]);
+    doctors,
+    isLoading,
+    refetch,
+    query,
+    setQuery,
+    selectedSpecialty,
+    selectedHospital,
+    specialtyFilterVisible,
+    hospitalFilterVisible,
+    specialtyOptions,
+    hospitalOptions,
+    filterLabels,
+    hasActiveFilter,
+    openSpecialtyFilter,
+    closeSpecialtyFilter,
+    openHospitalFilter,
+    closeHospitalFilter,
+    handleSpecialtySelect,
+    handleHospitalSelect,
+    handleClearSpecialty,
+    handleClearHospital,
+    handleClearAllFilters,
+  } = useDoctorsList();
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <DoctorsListHeader
           hasActiveFilter={hasActiveFilter}
-          onSpecialtyPress={() => setSpecialtyFilterVisible(true)}
-          onHospitalPress={() => setHospitalFilterVisible(true)}
+          onSpecialtyPress={openSpecialtyFilter}
+          onHospitalPress={openHospitalFilter}
           onFilterPress={() => {
             if (specialtyOptions.length > 0) {
-              setSpecialtyFilterVisible(true);
+              openSpecialtyFilter();
             } else if (hospitalOptions.length > 0) {
-              setHospitalFilterVisible(true);
+              openHospitalFilter();
             }
           }}
         />
@@ -172,6 +69,8 @@ export const DoctorsScreen: React.FC = () => {
     hasActiveFilter,
     specialtyOptions.length,
     hospitalOptions.length,
+    openSpecialtyFilter,
+    openHospitalFilter,
   ]);
 
   const handleRefresh = async () => {
@@ -196,30 +95,36 @@ export const DoctorsScreen: React.FC = () => {
     );
   }
 
+  const renderListHeader = () => (
+    <View style={styles.headerContainer}>
+      <View style={styles.searchWrapper}>
+        <SearchBar
+          value={query}
+          onChangeText={setQuery}
+          placeholder={
+            t("doctors.search.placeholder") || "Search by name, specialty..."
+          }
+          style={styles.searchBar}
+        />
+      </View>
+
+      {hasActiveFilter && (
+        <FilterIndicator
+          filterLabels={filterLabels}
+          onClear={handleClearAllFilters}
+        />
+      )}
+    </View>
+  );
+
   return (
     <ScreenLayout scrollable={false}>
       <View style={styles.container}>
-        <View style={styles.searchContainer}>
-          <SearchBar
-            value={query}
-            onChangeText={setQuery}
-            placeholder={
-              t("doctors.search.placeholder") || "Search by name, specialty..."
-            }
-          />
-        </View>
-
-        {hasActiveFilter && (
-          <FilterIndicator
-            filterLabels={filterLabels}
-            onClear={handleClearFilters}
-          />
-        )}
-
         <FlatList
-          data={filteredDoctors}
+          data={doctors}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
+          ListHeaderComponent={renderListHeader}
           ListEmptyComponent={
             <EmptyState
               icon="Search"
@@ -244,35 +149,21 @@ export const DoctorsScreen: React.FC = () => {
 
         <FilterSheet
           visible={specialtyFilterVisible}
-          options={specialtyOptions.map((opt) => ({
-            ...opt,
-            icon: "Stethoscope" as const,
-          }))}
+          options={specialtyOptions}
           selectedIds={selectedSpecialty ? [selectedSpecialty] : []}
           onFilterPress={handleSpecialtySelect}
-          onClearFilters={() => {
-            handleClearSpecialtyFilters();
-            setSelectedSpecialty(null);
-            setSpecialtyFilterVisible(false);
-          }}
-          onClose={() => setSpecialtyFilterVisible(false)}
+          onClearFilters={handleClearSpecialty}
+          onClose={closeSpecialtyFilter}
           title={t("doctors.filters.specialization") || "Specialization"}
         />
 
         <FilterSheet
           visible={hospitalFilterVisible}
-          options={hospitalOptions.map((opt) => ({
-            ...opt,
-            icon: "Building" as const,
-          }))}
+          options={hospitalOptions}
           selectedIds={selectedHospital ? [selectedHospital] : []}
           onFilterPress={handleHospitalSelect}
-          onClearFilters={() => {
-            handleClearHospitalFilters();
-            setSelectedHospital(null);
-            setHospitalFilterVisible(false);
-          }}
-          onClose={() => setHospitalFilterVisible(false)}
+          onClearFilters={handleClearHospital}
+          onClose={closeHospitalFilter}
           title={t("doctors.filters.hospital") || "Hospital"}
         />
       </View>
@@ -284,9 +175,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  searchContainer: {
+  headerContainer: {
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  searchWrapper: {
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingBottom: 12,
+  },
+  searchBar: {
+    borderRadius: 16,
+    elevation: 0,
+    shadowOpacity: 0,
   },
   list: {
     padding: 16,
