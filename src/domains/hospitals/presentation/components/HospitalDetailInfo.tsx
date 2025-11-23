@@ -18,7 +18,7 @@ interface InfoRowProps {
 }
 
 const InfoRow: React.FC<InfoRowProps> = ({ label, value }) => {
-  if (!value) {
+  if (value === undefined || value === null || value === "") {
     return null;
   }
 
@@ -28,7 +28,7 @@ const InfoRow: React.FC<InfoRowProps> = ({ label, value }) => {
         {label}:
       </AtomicText>
       <AtomicText type="bodyLarge" color="textPrimary">
-        {value}
+        {String(value)}
       </AtomicText>
     </View>
   );
@@ -46,7 +46,7 @@ export const HospitalDetailInfo: React.FC<HospitalDetailInfoProps> = ({
       </AtomicText>
       <InfoRow label={t("hospitals.fields.phone")} value={hospital.phone} />
       <InfoRow label={t("hospitals.fields.email")} value={hospital.email} />
-      {hospital.latitude && hospital.longitude && (
+      {hospital.latitude !== undefined && hospital.longitude !== undefined && (
         <>
           <InfoRow
             label={t("hospitals.fields.latitude")}

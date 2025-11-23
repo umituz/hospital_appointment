@@ -122,7 +122,7 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
           onPress={onEditProfile || (() => {})}
           style={styles.actionButton}
         >
-          {t("hospitals.card.editProfile") || "Edit Profile"}
+          {t("hospitals.card.edit") || "Edit Hospital"}
         </AtomicButton>
       </View>
     </View>
