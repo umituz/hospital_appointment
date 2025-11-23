@@ -1,10 +1,10 @@
-import { Appointment, AppointmentFormData } from '../../types';
-import { storageService } from '../../../storage/infrastructure/services';
-import { HospitalRepository } from '../../../hospitals/infrastructure/repositories';
-import { DepartmentRepository } from './DepartmentRepository';
-import { DoctorRepository } from '../../../doctors/infrastructure/repositories';
+import { Appointment, AppointmentFormData } from "../../types";
+import { storageService } from "../../../storage/infrastructure/services";
+import { HospitalRepository } from "../../../hospitals/infrastructure/repositories";
+import { DepartmentRepository } from "./DepartmentRepository";
+import { DoctorRepository } from "../../../doctors/infrastructure/repositories";
 
-const STORAGE_KEY = '@hospital_appointment:appointments';
+const STORAGE_KEY = "@hospital_appointment:appointments";
 
 export class AppointmentRepository {
   private hospitalRepository = new HospitalRepository();
@@ -12,7 +12,10 @@ export class AppointmentRepository {
   private doctorRepository = new DoctorRepository();
 
   private async getAllFromStorage(): Promise<Appointment[]> {
-    const appointments = await storageService.getItem<Appointment[]>(STORAGE_KEY, []);
+    const appointments = await storageService.getItem<Appointment[]>(
+      STORAGE_KEY,
+      [],
+    );
     return appointments || [];
   }
 
@@ -24,12 +27,22 @@ export class AppointmentRepository {
     data: AppointmentFormData,
   ): Promise<Partial<Appointment>> {
     const hospitals = await this.hospitalRepository.getAll();
-    const departments = await this.departmentRepository.getByHospitalId(data.hospital_id);
-    const doctors = await this.doctorRepository.getByDepartmentId(data.department_id);
+    const departments = await this.departmentRepository.getByHospitalId(
+      data.hospital_id,
+    );
+    const doctors = await this.doctorRepository.getByDepartmentId(
+      data.department_id,
+    );
 
-    const hospital = hospitals.find((h) => h.id.toString() === data.hospital_id.toString());
-    const department = departments.find((d) => d.id.toString() === data.department_id.toString());
-    const doctor = doctors.find((d) => d.id.toString() === data.doctor_id.toString());
+    const hospital = hospitals.find(
+      (h) => h.id.toString() === data.hospital_id.toString(),
+    );
+    const department = departments.find(
+      (d) => d.id.toString() === data.department_id.toString(),
+    );
+    const doctor = doctors.find(
+      (d) => d.id.toString() === data.doctor_id.toString(),
+    );
 
     return {
       hospital_name: hospital?.name,
@@ -62,7 +75,9 @@ export class AppointmentRepository {
       ...data,
       ...relations,
       id: Date.now().toString(),
-      status: 'scheduled',
+      status: "scheduled",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
     appointments.push(newAppointment);
     await this.saveToStorage(appointments);
@@ -73,7 +88,7 @@ export class AppointmentRepository {
     const appointments = await this.getAllFromStorage();
     const index = appointments.findIndex((a) => a.id === id);
     if (index === -1) {
-      throw new Error('Appointment not found');
+      throw new Error("Appointment not found");
     }
     const relations = await this.enrichAppointmentWithRelations(data);
     const updatedAppointment: Appointment = {
@@ -81,6 +96,7 @@ export class AppointmentRepository {
       ...data,
       ...relations,
       id,
+      updated_at: new Date().toISOString(),
     };
     appointments[index] = updatedAppointment;
     await this.saveToStorage(appointments);
@@ -93,4 +109,3 @@ export class AppointmentRepository {
     await this.saveToStorage(filtered);
   }
 }
-

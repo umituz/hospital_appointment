@@ -10,7 +10,9 @@
     "doctorRequired": "Please select a doctor",
     "dateRequired": "Please select a date",
     "timeRequired": "Please select a time",
-    "patientNameRequired": "Please enter patient name"
+    "patientNameRequired": "Please enter patient name",
+    "dateInvalid": "Invalid date format",
+    "timeInvalid": "Invalid time format"
   },
   "status": {
     "scheduled": "Scheduled",
@@ -36,4 +38,3 @@
     }
   }
 }
-

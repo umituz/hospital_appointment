@@ -1,4 +1,8 @@
-export type AppointmentStatus = 'scheduled' | 'completed' | 'cancelled' | 'missed';
+export type AppointmentStatus =
+  | "scheduled"
+  | "completed"
+  | "cancelled"
+  | "missed";
 
 export interface Appointment {
   id: string;
@@ -24,6 +28,8 @@ export interface Appointment {
   longitude?: number;
   rating?: string;
   experience_years?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface AppointmentFormData {
@@ -44,4 +50,3 @@ export interface Department {
   name: string;
   hospital_id: string | number;
 }
-
