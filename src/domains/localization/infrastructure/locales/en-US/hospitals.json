@@ -2,10 +2,6 @@
   "search": {
     "placeholder": "Search by name, address, phone..."
   },
-  "filters": {
-    "city": "City",
-    "active": "Filtered by"
-  },
   "card": {
     "edit": "Edit Hospital",
     "showDetails": "Show Details"

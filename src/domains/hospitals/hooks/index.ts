@@ -4,7 +4,6 @@ export { useCreateHospital } from "./useCreateHospital";
 export { useUpdateHospital } from "./useUpdateHospital";
 export { useDeleteHospital } from "./useDeleteHospital";
 export { useHospitalsList } from "./useHospitalsList";
-export { useHospitalsFilters } from "./useHospitalsFilters";
 export { useHospitalNavigation } from "./useHospitalNavigation";
 export { useClearHospitals } from "./useClearHospitals";
 export { useHospitalForm } from "./useHospitalForm";

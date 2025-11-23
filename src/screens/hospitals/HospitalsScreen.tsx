@@ -1,10 +1,9 @@
-import React, { useLayoutEffect } from "react";
+import React from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenLayout } from "@umituz/react-native-design-system";
 import { AtomicFab } from "@umituz/react-native-design-system-atoms";
 import { SearchBar } from "@umituz/react-native-search";
-import { FilterSheet } from "@umituz/react-native-filter";
 import { InfiniteScrollList } from "@umituz/react-native-infinite-scroll";
 import { useLocalization } from "@umituz/react-native-localization";
 import {
@@ -16,11 +15,7 @@ import {
   getHospitalsPage,
   hasMoreHospitals,
 } from "@/domains/hospitals/utils/pagination";
-import {
-  HospitalCard,
-  HospitalsListHeader,
-} from "@/domains/hospitals/presentation/components";
-import { FilterIndicator } from "@/domains/doctors/presentation/components";
+import { HospitalCard } from "@/domains/hospitals/presentation/components";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingState } from "@/components/common/LoadingState";
 import type { Hospital } from "@/domains/hospitals/types";
@@ -32,39 +27,9 @@ export const HospitalsScreen: React.FC = () => {
     useHospitalNavigation();
   const { deleteHospital } = useDeleteHospital();
 
-  const {
-    hospitals,
-    isLoading,
-    refetch,
-    query,
-    setQuery,
-    selectedCity,
-    cityFilterVisible,
-    cityOptions,
-    filterLabels,
-    hasActiveFilter,
-    openCityFilter,
-    closeCityFilter,
-    handleCitySelect,
-    handleClearCity,
-    handleClearAllFilters,
-  } = useHospitalsList();
+  const { hospitals, isLoading, refetch, query, setQuery } = useHospitalsList();
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <HospitalsListHeader
-          hasActiveFilter={hasActiveFilter}
-          onCityPress={openCityFilter}
-          onFilterPress={() => {
-            if (cityOptions.length > 0) {
-              openCityFilter();
-            }
-          }}
-        />
-      ),
-    });
-  }, [navigation, hasActiveFilter, cityOptions.length, openCityFilter]);
+  // No header right component needed - filters removed
 
   const handleDelete = async (hospitalId: string) => {
     Alert.alert(
@@ -132,13 +97,6 @@ export const HospitalsScreen: React.FC = () => {
           style={styles.searchBar}
         />
       </View>
-
-      {hasActiveFilter && (
-        <FilterIndicator
-          filterLabels={filterLabels}
-          onClear={handleClearAllFilters}
-        />
-      )}
     </View>
   );
 
@@ -146,7 +104,7 @@ export const HospitalsScreen: React.FC = () => {
     <ScreenLayout scrollable={false}>
       <View style={styles.container}>
         <InfiniteScrollList
-          key={`${selectedCity}-${query}`}
+          key={query}
           config={{
             pageSize: 20,
             threshold: 5,
@@ -178,16 +136,6 @@ export const HospitalsScreen: React.FC = () => {
           variant="primary"
           size="md"
           testID="create-hospital-fab"
-        />
-
-        <FilterSheet
-          visible={cityFilterVisible}
-          options={cityOptions}
-          selectedIds={selectedCity ? [selectedCity] : []}
-          onFilterPress={handleCitySelect}
-          onClearFilters={handleClearCity}
-          onClose={closeCityFilter}
-          title={t("hospitals.filters.city") || "City"}
         />
       </View>
     </ScreenLayout>
