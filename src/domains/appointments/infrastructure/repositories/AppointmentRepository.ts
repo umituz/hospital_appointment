@@ -14,11 +14,22 @@ export class AppointmentRepository {
     return this.storageRepository.getById(id);
   }
 
-  async create(data: AppointmentFormData): Promise<Appointment> {
+  async create(data: Appointment | AppointmentFormData): Promise<Appointment> {
     const appointments = await this.storageRepository.getAll();
-    const relations = await this.enrichmentService.enrichWithRelations(data);
+
+    // If data is already an Appointment, use it directly
+    if ("id" in data && data.id) {
+      appointments.push(data);
+      await this.storageRepository.saveAll(appointments);
+      return data;
+    }
+
+    // If data is AppointmentFormData, enrich it
+    const relations = await this.enrichmentService.enrichWithRelations(
+      data as AppointmentFormData,
+    );
     const newAppointment: Appointment = {
-      ...data,
+      ...(data as AppointmentFormData),
       ...relations,
       id: Date.now().toString(),
       status: "scheduled",
@@ -30,16 +41,30 @@ export class AppointmentRepository {
     return newAppointment;
   }
 
-  async update(id: string, data: AppointmentFormData): Promise<Appointment> {
+  async update(
+    id: string,
+    data: Appointment | AppointmentFormData,
+  ): Promise<Appointment> {
     const appointments = await this.storageRepository.getAll();
     const index = appointments.findIndex((a) => a.id === id);
     if (index === -1) {
       throw new Error("Appointment not found");
     }
-    const relations = await this.enrichmentService.enrichWithRelations(data);
+
+    // If data is Appointment, use it directly
+    if ("id" in data && data.id) {
+      appointments[index] = data;
+      await this.storageRepository.saveAll(appointments);
+      return data;
+    }
+
+    // If data is AppointmentFormData, enrich it
+    const relations = await this.enrichmentService.enrichWithRelations(
+      data as AppointmentFormData,
+    );
     const updatedAppointment: Appointment = {
       ...appointments[index],
-      ...data,
+      ...(data as AppointmentFormData),
       ...relations,
       id,
       updated_at: new Date().toISOString(),

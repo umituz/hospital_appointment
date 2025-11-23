@@ -1,27 +1,37 @@
-import { AppointmentRepository } from '../repositories';
-import { AppointmentValidationService } from '../../utils/validation';
-import { AppointmentFormData } from '../../types';
+import { AppointmentRepository } from "../repositories";
+import { AppointmentEnrichmentService } from "./AppointmentEnrichmentService";
+import { AppointmentValidationService } from "../../utils/validation";
+import { AppointmentFormData, Appointment } from "../../types";
 
 export class AppointmentService {
   private appointmentRepository: AppointmentRepository;
+  private enrichmentService: AppointmentEnrichmentService;
 
   constructor() {
     this.appointmentRepository = new AppointmentRepository();
+    this.enrichmentService = new AppointmentEnrichmentService();
   }
 
-  async createAppointment(data: AppointmentFormData, t: (key: string) => string): Promise<void> {
+  async createAppointment(
+    data: AppointmentFormData,
+    t: (key: string) => string,
+  ): Promise<Appointment> {
     const validation = AppointmentValidationService.validateFormData(data, t);
     if (!validation.isValid) {
-      throw new Error(validation.errors.join(', '));
+      throw new Error(validation.errors.join(", "));
     }
 
-    await this.appointmentRepository.create(data);
+    return await this.appointmentRepository.create(data);
   }
 
-  async updateAppointment(id: string, data: AppointmentFormData, t: (key: string) => string): Promise<void> {
+  async updateAppointment(
+    id: string,
+    data: AppointmentFormData,
+    t: (key: string) => string,
+  ): Promise<void> {
     const validation = AppointmentValidationService.validateFormData(data, t);
     if (!validation.isValid) {
-      throw new Error(validation.errors.join(', '));
+      throw new Error(validation.errors.join(", "));
     }
 
     await this.appointmentRepository.update(id, data);
@@ -31,4 +41,3 @@ export class AppointmentService {
     await this.appointmentRepository.delete(id);
   }
 }
-
