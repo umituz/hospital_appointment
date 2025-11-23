@@ -1,7 +1,6 @@
 import {
   validateRequired,
   validateName,
-  validatePhone,
   validatePattern,
   batchValidate,
 } from "@umituz/react-native-validation";
@@ -59,13 +58,6 @@ export class AppointmentValidationService {
           ),
       },
     ];
-
-    if (formData.patient_phone && formData.patient_phone.trim().length > 0) {
-      validations.push({
-        field: "patient_phone",
-        validator: () => validatePhone(formData.patient_phone),
-      });
-    }
 
     if (formData.appointment_date) {
       validations.push({
