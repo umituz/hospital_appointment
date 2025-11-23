@@ -2,8 +2,6 @@ export type RootStackParamList = {
   Splash: undefined;
   Onboarding: undefined;
   Main: undefined;
-  Legal: undefined;
-  About: undefined;
   AppointmentDetail: { appointmentId: string };
   CreateDoctor: undefined;
   EditDoctor: { doctorId: string };
@@ -27,6 +25,4 @@ export type SettingsStackParamList = {
   Settings: undefined;
   Appearance: undefined;
   LanguageSelection: undefined;
-  About: undefined;
-  Legal: undefined;
 };

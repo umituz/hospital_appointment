@@ -9,8 +9,6 @@ import {
   AppearanceScreen,
   LanguageSelectionScreen,
 } from "@umituz/react-native-settings";
-import { AboutScreen } from "@/screens/AboutScreen";
-import { LegalScreen } from "@/screens/LegalScreen";
 import { SettingsScreen } from "@/screens/SettingsScreen";
 import { SettingsStackParamList } from "@core/navigation/types";
 
@@ -56,26 +54,6 @@ export const SettingsStackNavigator: React.FC = () => {
         options={{
           headerShown: true,
           headerTitle: t("settings.languageSelection.title"),
-          headerTitleAlign: "center",
-          headerBackTitle: t("navigation.settings"),
-        }}
-      />
-      <SettingsStack.Screen
-        name="About"
-        component={AboutScreen}
-        options={{
-          headerShown: true,
-          headerTitle: t("settings.about.title"),
-          headerTitleAlign: "center",
-          headerBackTitle: t("navigation.settings"),
-        }}
-      />
-      <SettingsStack.Screen
-        name="Legal"
-        component={LegalScreen}
-        options={{
-          headerShown: true,
-          headerTitle: t("settings.legal.title"),
           headerTitleAlign: "center",
           headerBackTitle: t("navigation.settings"),
         }}
