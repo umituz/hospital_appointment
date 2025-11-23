@@ -1,1 +1,1 @@
-export { DoctorDataService } from "./DoctorDataService";
+export { DoctorService } from "./DoctorService";

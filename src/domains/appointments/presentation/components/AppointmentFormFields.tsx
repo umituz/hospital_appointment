@@ -28,8 +28,8 @@ interface AppointmentFormFieldsProps {
   onSelectHospital: (hospitalId: string) => void;
   onSelectDepartment: (departmentId: string) => void;
   onSelectDoctor: (doctorId: string) => void;
-  onDateChange: (date: Date) => void;
-  onTimeChange: (time: Date) => void;
+  onDateSelect: () => void;
+  onTimeSelect: () => void;
 }
 
 export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
@@ -47,8 +47,8 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
   onSelectHospital,
   onSelectDepartment,
   onSelectDoctor,
-  onDateChange,
-  onTimeChange,
+  onDateSelect,
+  onTimeSelect,
 }) => {
   return (
     <View style={styles.container}>
@@ -70,21 +70,19 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
         />
       )}
 
-      {formData.department_id && (
-        <DoctorPickerField
-          doctors={doctors}
-          selectedDoctorId={formData.doctor_id}
-          showPicker={showDoctorPicker}
-          onTogglePicker={onToggleDoctorPicker}
-          onSelectDoctor={onSelectDoctor}
-        />
-      )}
+      <DoctorPickerField
+        doctors={doctors}
+        selectedDoctorId={formData.doctor_id}
+        showPicker={showDoctorPicker}
+        onTogglePicker={onToggleDoctorPicker}
+        onSelectDoctor={onSelectDoctor}
+      />
 
       <DateTimeFields
         appointmentDate={formData.appointment_date}
         appointmentTime={formData.appointment_time}
-        onDateChange={onDateChange}
-        onTimeChange={onTimeChange}
+        onDateSelect={onDateSelect}
+        onTimeSelect={onTimeSelect}
       />
 
       <PatientFields

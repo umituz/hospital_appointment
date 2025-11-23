@@ -19,8 +19,8 @@ export function useCreateAppointmentForm() {
     setShowDepartmentPicker,
     showDoctorPicker,
     setShowDoctorPicker,
-    handleDateChange,
-    handleTimeChange,
+    handleDateSelect,
+    handleTimeSelect,
   } = useAppointmentForm();
 
   const onSelectHospital = useCallback(
@@ -42,23 +42,6 @@ export function useCreateAppointmentForm() {
       updateFormData("doctor_id", doctorId);
     },
     [updateFormData],
-  );
-
-  const handleSelectHospital = useCallback(
-    (hospitalId: string) => {
-      onSelectHospital(hospitalId);
-      updateFormData("department_id", "");
-      updateFormData("doctor_id", "");
-    },
-    [onSelectHospital, updateFormData],
-  );
-
-  const handleSelectDepartment = useCallback(
-    (departmentId: string) => {
-      onSelectDepartment(departmentId);
-      updateFormData("doctor_id", "");
-    },
-    [onSelectDepartment, updateFormData],
   );
 
   const handleSubmit = useCallback(async () => {
@@ -101,9 +84,7 @@ export function useCreateAppointmentForm() {
     onSelectHospital,
     onSelectDepartment,
     onSelectDoctor,
-    handleSelectHospital,
-    handleSelectDepartment,
-    handleDateChange,
-    handleTimeChange,
+    handleDateSelect,
+    handleTimeSelect,
   };
 }

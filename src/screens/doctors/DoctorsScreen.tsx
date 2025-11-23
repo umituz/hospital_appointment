@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useMemo } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenLayout } from "@umituz/react-native-design-system";
 import { AtomicFab } from "@umituz/react-native-design-system-atoms";
@@ -10,7 +10,7 @@ import { useLocalization } from "@umituz/react-native-localization";
 import {
   useDoctorsList,
   useDoctorNavigation,
-  useDoctorsActions,
+  useDeleteDoctor,
 } from "@/domains/doctors";
 import {
   getDoctorsPage,
@@ -30,6 +30,7 @@ export const DoctorsScreen: React.FC = () => {
   const { t } = useLocalization();
   const { navigateToCreate, navigateToEdit, navigateToDetail } =
     useDoctorNavigation();
+  const { deleteDoctor } = useDeleteDoctor();
 
   const {
     doctors,
@@ -56,8 +57,6 @@ export const DoctorsScreen: React.FC = () => {
     handleClearAllFilters,
   } = useDoctorsList();
 
-  const { handleDelete } = useDoctorsActions(refetch);
-
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -83,6 +82,30 @@ export const DoctorsScreen: React.FC = () => {
     openSpecialtyFilter,
     openHospitalFilter,
   ]);
+
+  const handleDelete = async (doctorId: string) => {
+    Alert.alert(
+      t("general.confirm") || "Confirm",
+      t("doctors.messages.deleteConfirm") ||
+        "Are you sure you want to delete this doctor?",
+      [
+        {
+          text: t("general.cancel") || "Cancel",
+          style: "cancel",
+        },
+        {
+          text: t("general.delete") || "Delete",
+          style: "destructive",
+          onPress: async () => {
+            const success = await deleteDoctor(doctorId);
+            if (success) {
+              await refetch();
+            }
+          },
+        },
+      ],
+    );
+  };
 
   const fetchDoctorsPage = async (
     page: number,

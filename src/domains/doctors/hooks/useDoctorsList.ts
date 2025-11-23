@@ -1,104 +1,138 @@
+import { useMemo } from "react";
+import { useSearch } from "@umituz/react-native-search";
+import { useListFilters } from "@umituz/react-native-filter";
 import { useDoctors } from "./useDoctors";
 import { useDepartments } from "@/domains/appointments";
-import { useDoctorsSearch } from "./useDoctorsSearch";
-import { useDoctorsFilters } from "./useDoctorsFilters";
-import { useDoctorsActions } from "./useDoctorsActions";
+import { useDoctorFilters } from "./useDoctorFilters";
+import { useDoctorFilterOptions } from "./useDoctorFilterOptions";
+import { filterDoctors, type DoctorFilters } from "../utils/filtering";
+import type { Department } from "@/domains/appointments/types";
 
-export interface UseDoctorsListReturn {
-  doctors: any[];
-  isLoading: boolean;
-  refetch: () => Promise<void>;
-  query: string;
-  setQuery: (query: string) => void;
-  selectedSpecialty: string | null;
-  selectedHospital: string | null;
-  specialtyFilterVisible: boolean;
-  hospitalFilterVisible: boolean;
-  specialtyOptions: Array<{ id: string; label: string }>;
-  hospitalOptions: Array<{ id: string; label: string }>;
-  filterLabels: string[];
-  hasActiveFilter: boolean;
-  openSpecialtyFilter: () => void;
-  closeSpecialtyFilter: () => void;
-  openHospitalFilter: () => void;
-  closeHospitalFilter: () => void;
-  handleSpecialtySelect: (filterId: string) => void;
-  handleHospitalSelect: (filterId: string) => void;
-  handleClearSpecialty: () => void;
-  handleClearHospital: () => void;
-  handleClearAllFilters: () => void;
-}
-
-export function useDoctorsList(): UseDoctorsListReturn {
+export function useDoctorsList() {
   const { doctors, isLoading, refetch } = useDoctors();
   const { departments } = useDepartments(undefined);
+  const { query, setQuery, debouncedQuery } = useSearch({
+    debounceMs: 300,
+  });
 
-  const search = useDoctorsSearch();
-  const filters = useDoctorsFilters(doctors, departments);
+  const {
+    selectedSpecialty,
+    selectedHospital,
+    specialtyFilterVisible,
+    hospitalFilterVisible,
+    openSpecialtyFilter,
+    closeSpecialtyFilter,
+    openHospitalFilter,
+    closeHospitalFilter,
+    selectSpecialty,
+    selectHospital,
+    clearFilters: clearFilterSelections,
+    hasActiveFilter: hasActiveFilterSelection,
+  } = useDoctorFilters();
 
-  const filteredDoctors = useFilteredDoctors(
+  const { specialtyOptions, hospitalOptions } = useDoctorFilterOptions(
     doctors,
-    search.query,
-    filters.selectedSpecialty,
-    filters.selectedHospital,
+    departments,
   );
 
-  const hasActiveFilter = filters.hasActiveFilter || search.query.trim() !== "";
+  const {
+    handleFilterPress: handleSpecialtyFilterPress,
+    handleClearFilters: handleClearSpecialtyFilters,
+  } = useListFilters({
+    options: specialtyOptions,
+    defaultFilterId: "",
+    singleSelect: true,
+  });
+
+  const {
+    handleFilterPress: handleHospitalFilterPress,
+    handleClearFilters: handleClearHospitalFilters,
+  } = useListFilters({
+    options: hospitalOptions,
+    defaultFilterId: "",
+    singleSelect: true,
+  });
+
+  const filteredDoctors = useMemo(() => {
+    const filters: DoctorFilters = {
+      searchQuery: debouncedQuery,
+      specialty: selectedSpecialty,
+      hospital: selectedHospital,
+    };
+    return filterDoctors(doctors, filters);
+  }, [doctors, debouncedQuery, selectedSpecialty, selectedHospital]);
+
+  const handleSpecialtySelect = (filterId: string) => {
+    const specialty = filterId || null;
+    handleSpecialtyFilterPress(filterId);
+    selectSpecialty(specialty);
+  };
+
+  const handleHospitalSelect = (filterId: string) => {
+    const hospital = filterId || null;
+    handleHospitalFilterPress(filterId);
+    selectHospital(hospital);
+  };
+
+  const handleClearSpecialty = () => {
+    handleClearSpecialtyFilters();
+    selectSpecialty(null);
+    closeSpecialtyFilter();
+  };
+
+  const handleClearHospital = () => {
+    handleClearHospitalFilters();
+    selectHospital(null);
+    closeHospitalFilter();
+  };
 
   const handleClearAllFilters = () => {
-    filters.clearAllFilters();
-    search.setQuery("");
+    handleClearSpecialtyFilters();
+    handleClearHospitalFilters();
+    clearFilterSelections();
+    setQuery("");
   };
+
+  const hasActiveFilter = hasActiveFilterSelection || query.trim() !== "";
+
+  const filterLabels = useMemo(() => {
+    const labels: string[] = [];
+    if (selectedSpecialty) {
+      labels.push(selectedSpecialty);
+    }
+    if (selectedHospital) {
+      const dept = departments.find(
+        (d) => d.id.toString() === selectedHospital,
+      );
+      if (dept) {
+        labels.push(dept.name);
+      }
+    }
+    return labels;
+  }, [selectedSpecialty, selectedHospital, departments]);
 
   return {
     doctors: filteredDoctors,
     isLoading,
     refetch,
-    query: search.query,
-    setQuery: search.setQuery,
-    selectedSpecialty: filters.selectedSpecialty,
-    selectedHospital: filters.selectedHospital,
-    specialtyFilterVisible: filters.specialtyFilterVisible,
-    hospitalFilterVisible: filters.hospitalFilterVisible,
-    specialtyOptions: filters.specialtyOptions,
-    hospitalOptions: filters.hospitalOptions,
-    filterLabels: filters.filterLabels,
+    query,
+    setQuery,
+    selectedSpecialty,
+    selectedHospital,
+    specialtyFilterVisible,
+    hospitalFilterVisible,
+    specialtyOptions,
+    hospitalOptions,
+    filterLabels,
     hasActiveFilter,
-    openSpecialtyFilter: filters.openSpecialtyFilter,
-    closeSpecialtyFilter: filters.closeSpecialtyFilter,
-    openHospitalFilter: filters.openHospitalFilter,
-    closeHospitalFilter: filters.closeHospitalFilter,
-    handleSpecialtySelect: filters.handleSpecialtySelect,
-    handleHospitalSelect: filters.handleHospitalSelect,
-    handleClearSpecialty: filters.handleClearSpecialty,
-    handleClearHospital: filters.handleClearHospital,
+    openSpecialtyFilter,
+    closeSpecialtyFilter,
+    openHospitalFilter,
+    closeHospitalFilter,
+    handleSpecialtySelect,
+    handleHospitalSelect,
+    handleClearSpecialty,
+    handleClearHospital,
     handleClearAllFilters,
   };
-}
-
-// Helper hook for filtering doctors
-function useFilteredDoctors(
-  doctors: any[],
-  query: string,
-  selectedSpecialty: string | null,
-  selectedHospital: string | null,
-) {
-  return doctors.filter((doctor) => {
-    // Search filter
-    if (query && !doctor.name.toLowerCase().includes(query.toLowerCase())) {
-      return false;
-    }
-
-    // Specialty filter
-    if (selectedSpecialty && doctor.specialty !== selectedSpecialty) {
-      return false;
-    }
-
-    // Hospital filter
-    if (selectedHospital && doctor.hospital_id !== selectedHospital) {
-      return false;
-    }
-
-    return true;
-  });
 }

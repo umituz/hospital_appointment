@@ -35,11 +35,6 @@ export class AppointmentValidationService {
           ),
       },
       {
-        field: "doctor_id",
-        validator: () =>
-          validateRequired(formData.doctor_id, t("appointments.fields.doctor")),
-      },
-      {
         field: "appointment_date",
         validator: () =>
           validateRequired(

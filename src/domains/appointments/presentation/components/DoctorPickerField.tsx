@@ -42,7 +42,7 @@ export const DoctorPickerField: React.FC<DoctorPickerFieldProps> = ({
           color="textSecondary"
           style={styles.label}
         >
-          {t("appointments.fields.doctor")} *
+          {t("appointments.fields.doctor")}
         </AtomicText>
         <TouchableOpacity
           onPress={onTogglePicker}

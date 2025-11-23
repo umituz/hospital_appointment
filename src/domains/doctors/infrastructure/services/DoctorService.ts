@@ -1,34 +1,81 @@
 import { DoctorRepository } from "../repositories";
-import { storageService } from "../../../storage/infrastructure/services";
+import { DoctorValidationService } from "../../utils/validation";
+import { DoctorFormData } from "../../types";
 
-export class DoctorDataService {
+export class DoctorService {
   private doctorRepository: DoctorRepository;
 
   constructor() {
-    this.doctorRepository = new DoctorRepository(storageService);
+    this.doctorRepository = new DoctorRepository();
   }
 
-  async create(data: any): Promise<any> {
-    return this.doctorRepository.create(data);
+  async createDoctor(
+    data: DoctorFormData,
+    t: (key: string) => string,
+  ): Promise<void> {
+    const validation = DoctorValidationService.validateFormData(data, t);
+    if (!validation.isValid) {
+      throw new Error(validation.errors.join(", "));
+    }
+
+    try {
+      await this.doctorRepository.create(data);
+    } catch (error) {
+      /* eslint-disable-next-line no-console */
+      if (__DEV__)
+        console.error("[DoctorService] Error creating doctor:", error);
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error(t("doctors.errors.createFailed"));
+    }
   }
 
-  async update(id: string, data: any): Promise<any> {
-    return this.doctorRepository.update(id, data);
+  async updateDoctor(
+    id: string,
+    data: Partial<DoctorFormData>,
+    t: (key: string) => string,
+  ): Promise<void> {
+    if (!id) {
+      throw new Error(t("doctors.errors.idRequired"));
+    }
+
+    const validation = DoctorValidationService.validateFormData(
+      data as DoctorFormData,
+      t,
+    );
+    if (!validation.isValid) {
+      throw new Error(validation.errors.join(", "));
+    }
+
+    try {
+      await this.doctorRepository.update(id, data);
+    } catch (error) {
+      /* eslint-disable-next-line no-console */
+      if (__DEV__)
+        console.error("[DoctorService] Error updating doctor:", error);
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error(t("doctors.errors.updateFailed"));
+    }
   }
 
-  async delete(id: string): Promise<void> {
-    return this.doctorRepository.delete(id);
-  }
+  async deleteDoctor(id: string, t: (key: string) => string): Promise<void> {
+    if (!id) {
+      throw new Error(t("doctors.errors.idRequired"));
+    }
 
-  async getAll(): Promise<any[]> {
-    return this.doctorRepository.getAll();
-  }
-
-  async getById(id: string): Promise<any | null> {
-    return this.doctorRepository.getById(id);
-  }
-
-  async getByDepartmentId(departmentId: string): Promise<any[]> {
-    return this.doctorRepository.getByDepartmentId(departmentId);
+    try {
+      await this.doctorRepository.delete(id);
+    } catch (error) {
+      /* eslint-disable-next-line no-console */
+      if (__DEV__)
+        console.error("[DoctorService] Error deleting doctor:", error);
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error(t("doctors.errors.deleteFailed"));
+    }
   }
 }
