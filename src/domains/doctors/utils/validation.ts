@@ -32,6 +32,10 @@ export class DoctorValidationService {
           ),
       },
       {
+        field: "hospital_id",
+        validator: () => validateRequired(data.hospital_id, "Hospital"),
+      },
+      {
         field: "department_id",
         validator: () =>
           validateRequired(

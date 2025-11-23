@@ -1,17 +1,18 @@
 import { useState, useCallback, useMemo } from "react";
-import { DoctorFormData } from "../types";
+import { useDoctorsStore } from "@/core/stores";
+import { DoctorFormData, Doctor } from "../types";
 import { useLocalization } from "@umituz/react-native-localization";
 import {
   CreateDoctorUseCase,
   CreateDoctorInput,
 } from "../application/use-cases";
 import { DoctorRepository } from "../infrastructure/repositories";
-import { storageService } from "../../storage/infrastructure/services";
 
 export function useCreateDoctor() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { t } = useLocalization();
+  const { addDoctor } = useDoctorsStore();
 
   const useCase = useMemo(
     () => new CreateDoctorUseCase(new DoctorRepository()),
@@ -19,7 +20,7 @@ export function useCreateDoctor() {
   );
 
   const create = useCallback(
-    async (data: DoctorFormData) => {
+    async (data: DoctorFormData): Promise<boolean> => {
       try {
         setIsLoading(true);
         setError(null);
@@ -35,6 +36,11 @@ export function useCreateDoctor() {
           throw new Error(result.errors?.join(", ") || "Validation failed");
         }
 
+        // Add to Zustand store for immediate UI update
+        if (result.doctor) {
+          addDoctor(result.doctor);
+        }
+
         return true;
       } catch (err) {
         const error =
@@ -45,7 +51,7 @@ export function useCreateDoctor() {
         setIsLoading(false);
       }
     },
-    [t, useCase],
+    [t, useCase, addDoctor],
   );
 
   return {

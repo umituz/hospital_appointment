@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { DoctorRepository } from "../../doctors/infrastructure/repositories";
 import { Doctor } from "../../doctors/types";
 
-export function useDoctors(departmentId?: string) {
+export function useDoctors(departmentId?: string, hospitalId?: string) {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -10,7 +10,7 @@ export function useDoctors(departmentId?: string) {
   const repository = new DoctorRepository();
 
   useEffect(() => {
-    if (!departmentId) {
+    if (!departmentId || !hospitalId) {
       setDoctors([]);
       setIsLoading(false);
       return;
@@ -20,8 +20,14 @@ export function useDoctors(departmentId?: string) {
       try {
         setIsLoading(true);
         setError(null);
-        const data = await repository.getByDepartmentId(departmentId);
-        setDoctors(data);
+        // Get all doctors and filter by both hospital and department
+        const allDoctors = await repository.getAll();
+        const filteredDoctors = allDoctors.filter(
+          (doctor) =>
+            doctor.department_id === departmentId &&
+            doctor.hospital_id === hospitalId,
+        );
+        setDoctors(filteredDoctors);
       } catch (err) {
         setError(
           err instanceof Error ? err : new Error("Failed to fetch doctors"),
@@ -32,7 +38,7 @@ export function useDoctors(departmentId?: string) {
     };
 
     fetchDoctors();
-  }, [departmentId]);
+  }, [departmentId, hospitalId]);
 
   return {
     doctors,

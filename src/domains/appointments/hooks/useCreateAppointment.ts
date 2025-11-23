@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import { useAppointmentsStore } from "@/core/stores";
 import { AppointmentFormData } from "../types";
 import { useLocalization } from "@umituz/react-native-localization";
 import {
@@ -12,6 +13,7 @@ export function useCreateAppointment() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { t } = useLocalization();
+  const { addAppointment } = useAppointmentsStore();
 
   const useCase = useMemo(
     () =>
@@ -20,7 +22,7 @@ export function useCreateAppointment() {
   );
 
   const create = useCallback(
-    async (data: AppointmentFormData) => {
+    async (data: AppointmentFormData): Promise<boolean> => {
       try {
         setIsLoading(true);
         setError(null);
@@ -36,6 +38,11 @@ export function useCreateAppointment() {
           throw new Error(result.errors?.join(", ") || "Validation failed");
         }
 
+        // Add to Zustand store for immediate UI update
+        if (result.appointment) {
+          addAppointment(result.appointment);
+        }
+
         return true;
       } catch (err) {
         const error =
@@ -48,7 +55,7 @@ export function useCreateAppointment() {
         setIsLoading(false);
       }
     },
-    [t, useCase],
+    [t, useCase, addAppointment],
   );
 
   return {

@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import { useHospitalsStore } from "@/core/stores";
 import {
   DeleteHospitalUseCase,
   DeleteHospitalInput,
@@ -9,6 +10,7 @@ import { storageService } from "../../storage/infrastructure/services";
 export function useDeleteHospital() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const { removeHospital } = useHospitalsStore();
 
   const useCase = useMemo(
     () => new DeleteHospitalUseCase(new HospitalRepository(storageService)),
@@ -16,7 +18,7 @@ export function useDeleteHospital() {
   );
 
   const remove = useCallback(
-    async (id: string) => {
+    async (id: string): Promise<boolean> => {
       try {
         setIsLoading(true);
         setError(null);
@@ -31,6 +33,9 @@ export function useDeleteHospital() {
           throw new Error("Failed to delete hospital");
         }
 
+        // Remove from Zustand store for immediate UI update
+        removeHospital(id);
+
         return true;
       } catch (err) {
         const error =
@@ -41,7 +46,7 @@ export function useDeleteHospital() {
         setIsLoading(false);
       }
     },
-    [useCase],
+    [useCase, removeHospital],
   );
 
   return {

@@ -9,13 +9,16 @@ import {
 import { AtomicCard } from "@umituz/react-native-design-system-atoms";
 import { useLocalization } from "@umituz/react-native-localization";
 import { useCreateDoctor, useDoctorForm } from "@/domains/doctors";
+import { useHospitals } from "@/domains/hospitals";
 import {
   DoctorFormFields,
   DoctorFormActions,
   DepartmentPicker,
 } from "@/domains/doctors/presentation/components";
+import { HospitalPickerField } from "@/domains/appointments/presentation/components";
 import { DepartmentRepository } from "@/domains/appointments/infrastructure/repositories";
 import { Department } from "@/domains/appointments/types";
+import { Hospital } from "@/domains/hospitals/types";
 
 export const CreateDoctorScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -23,7 +26,9 @@ export const CreateDoctorScreen: React.FC = () => {
   const { t } = useLocalization();
   const { create, isLoading, error } = useCreateDoctor();
   const { formData, updateFormData } = useDoctorForm();
+  const { hospitals } = useHospitals();
   const [departments, setDepartments] = useState<Department[]>([]);
+  const [showHospitalPicker, setShowHospitalPicker] = useState(false);
   const [showDepartmentPicker, setShowDepartmentPicker] = useState(false);
 
   useEffect(() => {
@@ -34,6 +39,20 @@ export const CreateDoctorScreen: React.FC = () => {
     };
     loadDepartments();
   }, []);
+
+  const handleSelectHospital = useCallback(
+    async (hospitalId: string) => {
+      updateFormData("hospital_id", hospitalId);
+      updateFormData("department_id", ""); // Reset department when hospital changes
+      setShowHospitalPicker(false);
+
+      // Load departments for selected hospital
+      const repository = new DepartmentRepository();
+      const data = await repository.getByHospitalId(hospitalId);
+      setDepartments(data);
+    },
+    [updateFormData],
+  );
 
   const handleSelectDepartment = useCallback(
     (departmentId: string) => {
@@ -94,6 +113,14 @@ export const CreateDoctorScreen: React.FC = () => {
         </View>
 
         <AtomicCard variant="elevated" padding="lg" style={styles.card}>
+          <HospitalPickerField
+            selectedHospitalId={formData.hospital_id}
+            onSelectHospital={handleSelectHospital}
+            onTogglePicker={() => setShowHospitalPicker(!showHospitalPicker)}
+            showPicker={showHospitalPicker}
+            hospitals={hospitals}
+          />
+
           <DoctorFormFields
             formData={formData}
             departments={departments}
@@ -120,6 +147,14 @@ export const CreateDoctorScreen: React.FC = () => {
         selectedDepartmentId={formData.department_id}
         onSelect={handleSelectDepartment}
         onClose={() => setShowDepartmentPicker(false)}
+      />
+
+      <HospitalPickerField
+        selectedHospitalId={formData.hospital_id}
+        onSelectHospital={handleSelectHospital}
+        onTogglePicker={() => setShowHospitalPicker(!showHospitalPicker)}
+        showPicker={showHospitalPicker}
+        hospitals={hospitals}
       />
     </ScreenLayout>
   );

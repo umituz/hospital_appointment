@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useEffect, useCallback, useMemo } from "react";
 import { Alert } from "react-native";
+import { useAppointmentsStore } from "@/core/stores";
 import { Appointment } from "../types";
 import {
   GetAppointmentsUseCase,
@@ -12,9 +13,15 @@ import { storageService } from "../../storage/infrastructure/services";
 import { useLocalization } from "@umituz/react-native-localization";
 
 export function useAppointments() {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const {
+    appointments,
+    isLoading,
+    error,
+    setAppointments,
+    setLoading,
+    setError,
+    removeAppointment,
+  } = useAppointmentsStore();
   const { t } = useLocalization();
 
   const getAppointmentsUseCase = useMemo(
@@ -28,10 +35,9 @@ export function useAppointments() {
     [],
   );
 
-  // Memoize fetch function to prevent infinite loops
   const fetchAppointments = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       setError(null);
 
       const input: GetAppointmentsInput = {};
@@ -43,13 +49,13 @@ export function useAppointments() {
 
       setAppointments(result.appointments);
     } catch (err) {
-      setError(
-        err instanceof Error ? err : new Error("Failed to fetch appointments"),
-      );
+      const error =
+        err instanceof Error ? err : new Error("Failed to fetch appointments");
+      setError(error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  }, [getAppointmentsUseCase]);
+  }, [getAppointmentsUseCase, setAppointments, setLoading, setError]);
 
   const handleDeleteAppointment = useCallback(
     (id: string) => {
@@ -79,7 +85,8 @@ export function useAppointments() {
                     t("appointments.messages.deleted") ||
                       "Appointment deleted successfully",
                   );
-                  fetchAppointments(); // Refetch after successful deletion
+                  // Remove from Zustand store for immediate UI update
+                  removeAppointment(id);
                 } else {
                   Alert.alert(
                     t("general.error") || "Error",
@@ -99,12 +106,15 @@ export function useAppointments() {
         ],
       );
     },
-    [t, deleteAppointmentUseCase, fetchAppointments],
+    [t, deleteAppointmentUseCase, removeAppointment],
   );
 
   useEffect(() => {
-    fetchAppointments();
-  }, [fetchAppointments]);
+    // Only fetch if we don't have appointments in store
+    if (appointments.length === 0) {
+      fetchAppointments();
+    }
+  }, [appointments.length, fetchAppointments]);
 
   return {
     appointments,

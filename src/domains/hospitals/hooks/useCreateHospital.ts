@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import { useHospitalsStore } from "@/core/stores";
 import { HospitalFormData } from "../types";
 import { useLocalization } from "@umituz/react-native-localization";
 import {
@@ -12,6 +13,7 @@ export function useCreateHospital() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { t } = useLocalization();
+  const { addHospital } = useHospitalsStore();
 
   const useCase = useMemo(
     () => new CreateHospitalUseCase(new HospitalRepository(storageService)),
@@ -19,7 +21,7 @@ export function useCreateHospital() {
   );
 
   const create = useCallback(
-    async (data: HospitalFormData) => {
+    async (data: HospitalFormData): Promise<boolean> => {
       try {
         setIsLoading(true);
         setError(null);
@@ -35,6 +37,11 @@ export function useCreateHospital() {
           throw new Error(result.errors?.join(", ") || "Validation failed");
         }
 
+        // Add to Zustand store for immediate UI update
+        if (result.hospital) {
+          addHospital(result.hospital);
+        }
+
         return true;
       } catch (err) {
         const error =
@@ -45,7 +52,7 @@ export function useCreateHospital() {
         setIsLoading(false);
       }
     },
-    [t, useCase],
+    [t, useCase, addHospital],
   );
 
   return {

@@ -37,7 +37,7 @@ export const CreateAppointmentScreen: React.FC = () => {
 
   const { hospitals } = useHospitals();
   const { departments } = useDepartments(formData.hospital_id);
-  const { doctors } = useDoctors(formData.department_id);
+  const { doctors } = useDoctors(formData.department_id, formData.hospital_id);
 
   const handleSelectHospital = useCallback(
     (hospitalId: string) => {

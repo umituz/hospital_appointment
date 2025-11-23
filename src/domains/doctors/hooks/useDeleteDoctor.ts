@@ -1,14 +1,15 @@
 import { useState, useCallback, useMemo } from "react";
+import { useDoctorsStore } from "@/core/stores";
 import {
   DeleteDoctorUseCase,
   DeleteDoctorInput,
 } from "../application/use-cases";
 import { DoctorRepository } from "../infrastructure/repositories";
-import { storageService } from "../../storage/infrastructure/services";
 
 export function useDeleteDoctor() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const { removeDoctor } = useDoctorsStore();
 
   const useCase = useMemo(
     () => new DeleteDoctorUseCase(new DoctorRepository()),
@@ -16,7 +17,7 @@ export function useDeleteDoctor() {
   );
 
   const remove = useCallback(
-    async (id: string) => {
+    async (id: string): Promise<boolean> => {
       try {
         setIsLoading(true);
         setError(null);
@@ -31,6 +32,9 @@ export function useDeleteDoctor() {
           throw new Error("Failed to delete doctor");
         }
 
+        // Remove from Zustand store for immediate UI update
+        removeDoctor(id);
+
         return true;
       } catch (err) {
         const error =
@@ -41,7 +45,7 @@ export function useDeleteDoctor() {
         setIsLoading(false);
       }
     },
-    [useCase],
+    [useCase, removeDoctor],
   );
 
   return {

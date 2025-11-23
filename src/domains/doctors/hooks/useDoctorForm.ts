@@ -4,6 +4,7 @@ import { Doctor, DoctorFormData } from "../types";
 const initialFormData: DoctorFormData = {
   name: "",
   specialty: "",
+  hospital_id: "",
   department_id: "",
   phone: "",
   email: "",
@@ -21,6 +22,7 @@ export function useDoctorForm(doctor?: Doctor) {
       setFormData({
         name: doctor.name || "",
         specialty: doctor.specialty || "",
+        hospital_id: doctor.hospital_id || "",
         department_id: doctor.department_id || "",
         phone: doctor.phone || "",
         email: doctor.email || "",

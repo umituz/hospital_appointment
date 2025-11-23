@@ -2,6 +2,7 @@ export interface Doctor {
   id: string;
   name: string;
   specialty: string;
+  hospital_id: string;
   department_id: string;
   phone?: string;
   email?: string;
@@ -16,6 +17,7 @@ export interface Doctor {
 export interface DoctorFormData {
   name: string;
   specialty: string;
+  hospital_id: string;
   department_id: string;
   phone: string;
   email: string;
@@ -24,4 +26,3 @@ export interface DoctorFormData {
   experience_years: number;
   notes: string;
 }
-

@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
+import { useDoctorsStore } from "@/core/stores";
 import { Doctor } from "../types";
 import { GetDoctorsUseCase, GetDoctorsInput } from "../application/use-cases";
 import { DoctorRepository } from "../infrastructure/repositories";
-import { storageService } from "../../storage/infrastructure/services";
 
 export interface UseDoctorsReturn {
   doctors: Doctor[];
@@ -12,13 +12,12 @@ export interface UseDoctorsReturn {
 }
 
 export function useDoctors(): UseDoctorsReturn {
-  const [doctors, setDoctors] = useState<Doctor[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+  const { doctors, isLoading, error, setDoctors, setLoading, setError } =
+    useDoctorsStore();
 
   const fetchDoctors = useCallback(async () => {
     try {
-      setIsLoading(true);
+      setLoading(true);
       setError(null);
 
       const useCase = new GetDoctorsUseCase(new DoctorRepository());
@@ -31,17 +30,20 @@ export function useDoctors(): UseDoctorsReturn {
 
       setDoctors(result.doctors);
     } catch (err) {
-      setError(
-        err instanceof Error ? err : new Error("Failed to fetch doctors"),
-      );
+      const error =
+        err instanceof Error ? err : new Error("Failed to fetch doctors");
+      setError(error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  }, []);
+  }, [setDoctors, setLoading, setError]);
 
   useEffect(() => {
-    fetchDoctors();
-  }, []);
+    // Only fetch if we don't have doctors in store
+    if (doctors.length === 0) {
+      fetchDoctors();
+    }
+  }, [doctors.length, fetchDoctors]);
 
   return {
     doctors,
