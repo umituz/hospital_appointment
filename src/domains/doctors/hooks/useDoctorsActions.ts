@@ -3,17 +3,17 @@ import { Alert } from "react-native";
 import { useLocalization } from "@umituz/react-native-localization";
 import { useDeleteDoctor } from "./useDeleteDoctor";
 
-export interface UseDoctorsDeleteLogicProps {
+export interface UseDoctorsActionsProps {
   onSuccess: () => void;
 }
 
-export interface UseDoctorsDeleteLogicReturn {
+export interface UseDoctorsActionsReturn {
   handleDelete: (doctorId: string) => void;
 }
 
-export function useDoctorsDeleteLogic({
-  onSuccess,
-}: UseDoctorsDeleteLogicProps): UseDoctorsDeleteLogicReturn {
+export function useDoctorsActions(
+  onSuccess: () => void,
+): UseDoctorsActionsReturn {
   const { t } = useLocalization();
   const { deleteDoctor } = useDeleteDoctor();
 

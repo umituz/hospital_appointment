@@ -1,17 +1,29 @@
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenLayout } from "@umituz/react-native-design-system";
 import { AtomicFab } from "@umituz/react-native-design-system-atoms";
+import { SearchBar } from "@umituz/react-native-search";
+import { FilterSheet } from "@umituz/react-native-filter";
+import { InfiniteScrollList } from "@umituz/react-native-infinite-scroll";
 import { useLocalization } from "@umituz/react-native-localization";
-import { useDoctorsList, useDoctorNavigation } from "@/domains/doctors";
 import {
+  useDoctorsList,
+  useDoctorNavigation,
+  useDoctorsActions,
+} from "@/domains/doctors";
+import {
+  getDoctorsPage,
+  hasMoreDoctors,
+} from "@/domains/doctors/utils/pagination";
+import {
+  DoctorCard,
   DoctorsListHeader,
   FilterIndicator,
 } from "@/domains/doctors/presentation/components";
+import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingState } from "@/components/common/LoadingState";
-import { DoctorsSearchAndFilters } from "./components/DoctorsSearchAndFilters";
-import { DoctorsList } from "./components/DoctorsList";
+import type { Doctor } from "@/domains/doctors/types";
 
 export const DoctorsScreen: React.FC = () => {
   const navigation = useNavigation();
@@ -42,8 +54,9 @@ export const DoctorsScreen: React.FC = () => {
     handleClearSpecialty,
     handleClearHospital,
     handleClearAllFilters,
-    handleDelete,
   } = useDoctorsList();
+
+  const { handleDelete } = useDoctorsActions(refetch);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -71,6 +84,25 @@ export const DoctorsScreen: React.FC = () => {
     openHospitalFilter,
   ]);
 
+  const fetchDoctorsPage = async (
+    page: number,
+    pageSize: number,
+  ): Promise<Doctor[]> => {
+    if (!doctors.length && isLoading) {
+      await refetch();
+    }
+    return getDoctorsPage(doctors, page, pageSize);
+  };
+
+  const renderItem = (doctor: Doctor) => (
+    <DoctorCard
+      doctor={doctor}
+      onEditProfile={() => navigateToEdit(doctor.id)}
+      onShowDetails={() => navigateToDetail(doctor.id)}
+      onDelete={() => handleDelete(doctor.id)}
+    />
+  );
+
   if (isLoading && doctors.length === 0) {
     return (
       <ScreenLayout scrollable={false}>
@@ -81,40 +113,56 @@ export const DoctorsScreen: React.FC = () => {
     );
   }
 
+  const listHeader = (
+    <View style={styles.headerContainer}>
+      <View style={styles.searchWrapper}>
+        <SearchBar
+          value={query}
+          onChangeText={setQuery}
+          placeholder={
+            t("doctors.search.placeholder") || "Search by name, specialty..."
+          }
+          style={styles.searchBar}
+        />
+      </View>
+
+      {hasActiveFilter && (
+        <FilterIndicator
+          filterLabels={filterLabels}
+          onClear={handleClearAllFilters}
+        />
+      )}
+    </View>
+  );
+
   return (
     <ScreenLayout scrollable={false}>
       <View style={styles.container}>
-        <DoctorsSearchAndFilters
-          query={query}
-          setQuery={setQuery}
-          specialtyFilterVisible={specialtyFilterVisible}
-          hospitalFilterVisible={hospitalFilterVisible}
-          specialtyOptions={specialtyOptions}
-          hospitalOptions={hospitalOptions}
-          selectedSpecialty={selectedSpecialty}
-          selectedHospital={selectedHospital}
-          onSpecialtySelect={handleSpecialtySelect}
-          onHospitalSelect={handleHospitalSelect}
-          onSpecialtyFilterClose={closeSpecialtyFilter}
-          onHospitalFilterClose={closeHospitalFilter}
-          onClearSpecialtyFilters={handleClearSpecialty}
-          onClearHospitalFilters={handleClearHospital}
-        />
-
-        {hasActiveFilter && (
-          <FilterIndicator
-            filterLabels={filterLabels}
-            onClear={handleClearAllFilters}
-          />
-        )}
-
-        <DoctorsList
-          doctors={doctors}
-          isLoading={isLoading}
-          refetch={refetch}
-          onEditProfile={navigateToEdit}
-          onShowDetails={navigateToDetail}
-          onDelete={handleDelete}
+        <InfiniteScrollList
+          key={`${selectedSpecialty}-${selectedHospital}-${query}`}
+          config={{
+            pageSize: 20,
+            threshold: 5,
+            fetchData: fetchDoctorsPage,
+            getItemKey: (doctor) => doctor.id,
+            hasMore: (lastPage: Doctor[], allPages: Doctor[][]) => {
+              const loadedDoctors = allPages.flat();
+              return hasMoreDoctors(doctors, loadedDoctors);
+            },
+          }}
+          renderItem={renderItem}
+          emptyComponent={
+            <EmptyState
+              icon="Search"
+              title="doctors.search.noResults"
+              description="doctors.search.noResultsDescription"
+            />
+          }
+          ListHeaderComponent={listHeader}
+          flatListProps={{
+            contentContainerStyle: styles.list,
+            showsVerticalScrollIndicator: false,
+          }}
         />
 
         <AtomicFab
@@ -124,6 +172,26 @@ export const DoctorsScreen: React.FC = () => {
           size="md"
           testID="create-doctor-fab"
         />
+
+        <FilterSheet
+          visible={specialtyFilterVisible}
+          options={specialtyOptions}
+          selectedIds={selectedSpecialty ? [selectedSpecialty] : []}
+          onFilterPress={handleSpecialtySelect}
+          onClearFilters={handleClearSpecialty}
+          onClose={closeSpecialtyFilter}
+          title={t("doctors.filters.specialization") || "Specialization"}
+        />
+
+        <FilterSheet
+          visible={hospitalFilterVisible}
+          options={hospitalOptions}
+          selectedIds={selectedHospital ? [selectedHospital] : []}
+          onFilterPress={handleHospitalSelect}
+          onClearFilters={handleClearHospital}
+          onClose={closeHospitalFilter}
+          title={t("doctors.filters.hospital") || "Hospital"}
+        />
       </View>
     </ScreenLayout>
   );
@@ -132,7 +200,21 @@ export const DoctorsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    gap: 16,
+  },
+  headerContainer: {
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  searchWrapper: {
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+  },
+  searchBar: {
+    borderRadius: 16,
+    elevation: 0,
+    shadowOpacity: 0,
+  },
+  list: {
     padding: 16,
     paddingTop: 0,
   },
