@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Alert } from "react-native";
+import { Alert, DevSettings } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { storageRepository } from "@umituz/react-native-storage";
 import { SettingsScreen as PackageSettingsScreen } from "@umituz/react-native-settings";
@@ -45,8 +45,8 @@ export const SettingsScreen: React.FC = () => {
                   {
                     text: t("common.restart"),
                     onPress: () => {
-                      // Force app restart by throwing an error that will be caught by error boundary
-                      throw new Error("Storage cleared - restarting app");
+                      // Graceful app restart using DevSettings.reload()
+                      DevSettings.reload();
                     },
                   },
                 ],
