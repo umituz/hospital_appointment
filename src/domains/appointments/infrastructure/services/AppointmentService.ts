@@ -28,13 +28,13 @@ export class AppointmentService {
     id: string,
     data: AppointmentFormData,
     t: (key: string) => string,
-  ): Promise<void> {
+  ): Promise<Appointment> {
     const validation = AppointmentValidationService.validateFormData(data, t);
     if (!validation.isValid) {
       throw new Error(validation.errors.join(", "));
     }
 
-    await this.appointmentRepository.update(id, data);
+    return await this.appointmentRepository.update(id, data);
   }
 
   async deleteAppointment(id: string): Promise<void> {
