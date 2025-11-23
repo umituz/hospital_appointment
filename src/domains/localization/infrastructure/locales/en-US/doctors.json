@@ -15,8 +15,8 @@
     "availableToday": "Available Today"
   },
   "card": {
-    "viewProfile": "View Profile",
-    "bookNow": "Book Now"
+    "editProfile": "Edit Profile",
+    "showDetails": "Show Details"
   },
   "create": {
     "title": "Add New Doctor",
@@ -27,6 +27,10 @@
     "title": "Edit Doctor",
     "description": "Update the doctor information below",
     "submit": "Update Doctor"
+  },
+  "detail": {
+    "title": "Doctor Details",
+    "information": "Information"
   },
   "messages": {
     "created": "Doctor created successfully",

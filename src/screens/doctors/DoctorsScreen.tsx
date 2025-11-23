@@ -7,13 +7,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { ScreenLayout, AtomicIcon } from "@umituz/react-native-design-system";
 import {
-  ScreenLayout,
-  AtomicIcon,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
-import { AppNavigation } from "@umituz/react-native-navigation";
-import { useDoctors, useDoctorSearch } from "@/domains/doctors";
+  useDoctors,
+  useDoctorSearch,
+  useDoctorNavigation,
+} from "@/domains/doctors";
 import {
   DoctorCard,
   DoctorSearchBar,
@@ -25,7 +24,6 @@ import { LoadingState } from "@/components/common/LoadingState";
 
 export const DoctorsScreen: React.FC = () => {
   const navigation = useNavigation();
-  const tokens = useAppDesignTokens();
   const { doctors, isLoading, refetch } = useDoctors();
   const { departments } = useDepartments(undefined);
   const {
@@ -37,41 +35,32 @@ export const DoctorsScreen: React.FC = () => {
     setSelectedHospital,
     filteredDoctors,
     specialties,
-    hasActiveFilters,
   } = useDoctorSearch(doctors);
+  const { navigateToCreate, navigateToEdit, navigateToDetail } =
+    useDoctorNavigation();
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
-          onPress={() => {
-            AppNavigation.navigate("CreateDoctor");
-          }}
+          onPress={navigateToCreate}
           style={{ marginRight: 16 }}
         >
           <AtomicIcon name="Plus" size="lg" color="primary" />
         </TouchableOpacity>
       ),
     });
-  }, [navigation]);
+  }, [navigation, navigateToCreate]);
 
   const handleRefresh = async () => {
     await refetch();
   };
 
-  const handleViewProfile = (doctorId: string) => {
-    AppNavigation.navigate("EditDoctor", { doctorId });
-  };
-
-  const handleBookNow = (doctorId: string) => {
-    AppNavigation.navigate("EditDoctor", { doctorId });
-  };
-
   const renderItem = ({ item }: { item: (typeof filteredDoctors)[0] }) => (
     <DoctorCard
       doctor={item}
-      onViewProfile={() => handleViewProfile(item.id)}
-      onBookNow={() => handleBookNow(item.id)}
+      onEditProfile={() => navigateToEdit(item.id)}
+      onShowDetails={() => navigateToDetail(item.id)}
     />
   );
 

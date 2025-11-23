@@ -1,91 +1,42 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { View, StyleSheet, ScrollView, Alert } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import {
-  ScreenLayout,
-  AtomicText,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import React from "react";
+import { View, StyleSheet, ScrollView } from "react-native";
+import { useRoute } from "@react-navigation/native";
+import { ScreenLayout, AtomicText } from "@umituz/react-native-design-system";
 import { AtomicCard } from "@umituz/react-native-design-system-atoms";
 import { LoadingState } from "@/components/common/LoadingState";
 import { EmptyState } from "@/components/common/EmptyState";
 import { useLocalization } from "@umituz/react-native-localization";
-import { useDoctor, useUpdateDoctor, useDoctorForm } from "@/domains/doctors";
+import { useEditDoctorForm } from "@/domains/doctors";
 import {
   DoctorFormFields,
   DoctorFormActions,
   DepartmentPicker,
 } from "@/domains/doctors/presentation/components";
-import { DepartmentRepository } from "@/domains/appointments/infrastructure/repositories";
-import { Department } from "@/domains/appointments/types";
 
 interface EditDoctorScreenParams {
   doctorId: string;
 }
 
 export const EditDoctorScreen: React.FC = () => {
-  const navigation = useNavigation();
   const route = useRoute();
-  const tokens = useAppDesignTokens();
   const { t } = useLocalization();
   const { doctorId } = (route.params as EditDoctorScreenParams) || {};
-  const { doctor, isLoading: doctorLoading } = useDoctor(doctorId);
-  const { update, isLoading, error } = useUpdateDoctor();
-  const { formData, updateFormData } = useDoctorForm(doctor || undefined);
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [showDepartmentPicker, setShowDepartmentPicker] = useState(false);
+  const {
+    doctor,
+    isLoading,
+    formData,
+    updateFormData,
+    departments,
+    showDepartmentPicker,
+    isLoadingSubmit,
+    handleSelectDepartment,
+    handleSubmit,
+    handleCancel,
+    toggleDepartmentPicker,
+    closeDepartmentPicker,
+  } = useEditDoctorForm(doctorId);
 
-  useEffect(() => {
-    const loadDepartments = async () => {
-      const repository = new DepartmentRepository();
-      const data = await repository.getAll();
-      setDepartments(data);
-    };
-    loadDepartments();
-  }, []);
-
-  const handleSelectDepartment = useCallback(
-    (departmentId: string) => {
-      updateFormData("department_id", departmentId);
-      setShowDepartmentPicker(false);
-    },
-    [updateFormData],
-  );
-
-  const handleSubmit = useCallback(async () => {
-    if (!doctorId) {
-      Alert.alert(
-        t("general.error") || "Error",
-        t("doctors.errors.idRequired"),
-      );
-      return;
-    }
-
-    const success = await update(doctorId, formData);
-    if (success) {
-      Alert.alert(
-        t("general.success") || "Success",
-        t("doctors.messages.updated") || "Doctor updated successfully",
-        [
-          {
-            text: t("general.ok") || "OK",
-            onPress: () => navigation.goBack(),
-          },
-        ],
-      );
-    } else if (error) {
-      Alert.alert(
-        t("general.error") || "Error",
-        error.message || t("doctors.errors.updateFailed"),
-      );
-    }
-  }, [update, doctorId, formData, error, t, navigation]);
-
-  const handleCancel = useCallback(() => {
-    navigation.goBack();
-  }, [navigation]);
-
-  if (doctorLoading) {
+  if (isLoading) {
     return (
       <ScreenLayout>
         <LoadingState icon="User" />
@@ -135,9 +86,7 @@ export const EditDoctorScreen: React.FC = () => {
             formData={formData}
             departments={departments}
             showDepartmentPicker={showDepartmentPicker}
-            onToggleDepartmentPicker={() =>
-              setShowDepartmentPicker(!showDepartmentPicker)
-            }
+            onToggleDepartmentPicker={toggleDepartmentPicker}
             onUpdateField={updateFormData}
             onSelectDepartment={handleSelectDepartment}
           />
@@ -145,7 +94,7 @@ export const EditDoctorScreen: React.FC = () => {
       </ScrollView>
 
       <DoctorFormActions
-        isLoading={isLoading}
+        isLoading={isLoadingSubmit}
         onSubmit={handleSubmit}
         onCancel={handleCancel}
         submitLabel={t("doctors.edit.submit") || "Update Doctor"}
@@ -156,7 +105,7 @@ export const EditDoctorScreen: React.FC = () => {
         departments={departments}
         selectedDepartmentId={formData.department_id}
         onSelect={handleSelectDepartment}
-        onClose={() => setShowDepartmentPicker(false)}
+        onClose={closeDepartmentPicker}
       />
     </ScreenLayout>
   );

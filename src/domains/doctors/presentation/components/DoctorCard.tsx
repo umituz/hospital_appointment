@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import {
   AtomicText,
@@ -8,39 +8,22 @@ import {
 } from "@umituz/react-native-design-system";
 import { useLocalization } from "@umituz/react-native-localization";
 import { Doctor } from "../../types";
-import { DepartmentRepository } from "@/domains/appointments/infrastructure/repositories";
-import { Department } from "@/domains/appointments/types";
+import { useDoctorDepartment } from "../../hooks";
 
 interface DoctorCardProps {
   doctor: Doctor;
-  onViewProfile?: () => void;
-  onBookNow?: () => void;
+  onEditProfile?: () => void;
+  onShowDetails?: () => void;
 }
 
 export const DoctorCard: React.FC<DoctorCardProps> = ({
   doctor,
-  onViewProfile,
-  onBookNow,
+  onEditProfile,
+  onShowDetails,
 }) => {
   const tokens = useAppDesignTokens();
   const { t } = useLocalization();
-  const [departmentName, setDepartmentName] = useState<string>("");
-
-  useEffect(() => {
-    const loadDepartment = async () => {
-      if (doctor.department_id) {
-        const repository = new DepartmentRepository();
-        const departments = await repository.getAll();
-        const department = departments.find(
-          (d) => d.id.toString() === doctor.department_id,
-        );
-        if (department) {
-          setDepartmentName(department.name);
-        }
-      }
-    };
-    loadDepartment();
-  }, [doctor.department_id]);
+  const departmentName = useDoctorDepartment(doctor.department_id);
 
   return (
     <View
@@ -106,18 +89,18 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
         <AtomicButton
           variant="outline"
           size="md"
-          onPress={onViewProfile || (() => {})}
+          onPress={onShowDetails || (() => {})}
           style={styles.actionButton}
         >
-          {t("doctors.card.viewProfile") || "View Profile"}
+          {t("doctors.card.showDetails") || "Show Details"}
         </AtomicButton>
         <AtomicButton
           variant="primary"
           size="md"
-          onPress={onBookNow || (() => {})}
+          onPress={onEditProfile || (() => {})}
           style={styles.actionButton}
         >
-          {t("doctors.card.bookNow") || "Book Now"}
+          {t("doctors.card.editProfile") || "Edit Profile"}
         </AtomicButton>
       </View>
     </View>

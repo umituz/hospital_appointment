@@ -41,6 +41,7 @@ import { RootStackParamList } from "./types";
 import { AppointmentDetailScreen } from "@screens/appointments/AppointmentDetailScreen";
 import { CreateDoctorScreen } from "@screens/doctors/CreateDoctorScreen";
 import { EditDoctorScreen } from "@screens/doctors/EditDoctorScreen";
+import { DoctorDetailScreen } from "@screens/doctors/DoctorDetailScreen";
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
@@ -111,6 +112,15 @@ export const AppNavigator: React.FC = () => {
             options={{
               headerShown: true,
               title: "Edit Doctor",
+              presentation: "modal",
+            }}
+          />
+          <RootStack.Screen
+            name="DoctorDetail"
+            component={DoctorDetailScreen}
+            options={{
+              headerShown: true,
+              title: "Doctor Details",
               presentation: "modal",
             }}
           />

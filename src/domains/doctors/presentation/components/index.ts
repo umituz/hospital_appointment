@@ -4,3 +4,5 @@ export { DoctorFormActions } from "./DoctorFormActions";
 export { DepartmentPicker } from "./DepartmentPicker";
 export { DoctorSearchBar } from "./DoctorSearchBar";
 export { DoctorFilterChips } from "./DoctorFilterChips";
+export { DoctorDetailHeader } from "./DoctorDetailHeader";
+export { DoctorDetailInfo } from "./DoctorDetailInfo";
