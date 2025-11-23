@@ -68,21 +68,21 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
             color="textPrimary"
             style={styles.hospitalName}
           >
-            {appointment.hospital_name || t("appointments.fields.hospital")}
+            {appointment.hospital_name || ""}
           </AtomicText>
           <AtomicText
             type="bodyLarge"
             color="textSecondary"
             style={styles.doctorName}
           >
-            {appointment.doctor_name || t("appointments.fields.doctor")}
+            {appointment.doctor_name || ""}
           </AtomicText>
           <AtomicText
             type="bodyMedium"
             color="textSecondary"
             style={styles.department}
           >
-            {appointment.department_name || t("appointments.fields.department")}
+            {appointment.department_name || ""}
           </AtomicText>
           <AtomicText
             type="bodySmall"

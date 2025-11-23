@@ -341,53 +341,59 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
         )}
       </View>
 
-      <FilterSheet
-        visible={showHospitalPicker}
-        options={hospitalOptions}
-        selectedIds={formData.hospital_id ? [formData.hospital_id] : []}
-        onFilterPress={(id) => {
-          onSelectHospital(id);
-          onToggleHospitalPicker();
-        }}
-        onClearFilters={() => {
-          onSelectHospital("");
-          onToggleHospitalPicker();
-        }}
-        onClose={onToggleHospitalPicker}
-        title={t("appointments.fields.hospital")}
-      />
+      {showHospitalPicker && (
+        <FilterSheet
+          visible={showHospitalPicker}
+          options={hospitalOptions}
+          selectedIds={formData.hospital_id ? [formData.hospital_id] : []}
+          onFilterPress={(id) => {
+            onSelectHospital(id);
+            onToggleHospitalPicker();
+          }}
+          onClearFilters={() => {
+            onSelectHospital("");
+            onToggleHospitalPicker();
+          }}
+          onClose={onToggleHospitalPicker}
+          title={t("appointments.fields.hospital")}
+        />
+      )}
 
-      <FilterSheet
-        visible={showDepartmentPicker}
-        options={departmentOptions}
-        selectedIds={formData.department_id ? [formData.department_id] : []}
-        onFilterPress={(id) => {
-          onSelectDepartment(id);
-          onToggleDepartmentPicker();
-        }}
-        onClearFilters={() => {
-          onSelectDepartment("");
-          onToggleDepartmentPicker();
-        }}
-        onClose={onToggleDepartmentPicker}
-        title={t("appointments.fields.department")}
-      />
+      {showDepartmentPicker && (
+        <FilterSheet
+          visible={showDepartmentPicker}
+          options={departmentOptions}
+          selectedIds={formData.department_id ? [formData.department_id] : []}
+          onFilterPress={(id) => {
+            onSelectDepartment(id);
+            onToggleDepartmentPicker();
+          }}
+          onClearFilters={() => {
+            onSelectDepartment("");
+            onToggleDepartmentPicker();
+          }}
+          onClose={onToggleDepartmentPicker}
+          title={t("appointments.fields.department")}
+        />
+      )}
 
-      <FilterSheet
-        visible={showDoctorPicker}
-        options={doctorOptions}
-        selectedIds={formData.doctor_id ? [formData.doctor_id] : []}
-        onFilterPress={(id) => {
-          onSelectDoctor(id);
-          onToggleDoctorPicker();
-        }}
-        onClearFilters={() => {
-          onSelectDoctor("");
-          onToggleDoctorPicker();
-        }}
-        onClose={onToggleDoctorPicker}
-        title={t("appointments.fields.doctor")}
-      />
+      {showDoctorPicker && (
+        <FilterSheet
+          visible={showDoctorPicker}
+          options={doctorOptions}
+          selectedIds={formData.doctor_id ? [formData.doctor_id] : []}
+          onFilterPress={(id) => {
+            onSelectDoctor(id);
+            onToggleDoctorPicker();
+          }}
+          onClearFilters={() => {
+            onSelectDoctor("");
+            onToggleDoctorPicker();
+          }}
+          onClose={onToggleDoctorPicker}
+          title={t("appointments.fields.doctor")}
+        />
+      )}
     </View>
   );
 };
