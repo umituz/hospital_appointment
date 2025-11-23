@@ -1,28 +1,30 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { AppointmentRepository } from '../infrastructure/repositories';
-import { Appointment } from '../types';
+import { useState, useEffect, useCallback } from "react";
+import { useStorage } from "@umituz/react-native-storage";
+import { Appointment } from "../types";
+
+const STORAGE_KEY = "@hospital_appointment:appointments";
 
 export function useAppointments() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-
-  // Memoize repository to prevent recreation on every render
-  const repository = useMemo(() => new AppointmentRepository(), []);
+  const { getItem } = useStorage();
 
   // Memoize fetch function to prevent infinite loops
   const fetchAppointments = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
-      const data = await repository.getAll();
+      const data = await getItem<Appointment[]>(STORAGE_KEY, []);
       setAppointments(data);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('Failed to fetch appointments'));
+      setError(
+        err instanceof Error ? err : new Error("Failed to fetch appointments"),
+      );
     } finally {
       setIsLoading(false);
     }
-  }, [repository]);
+  }, [getItem]);
 
   useEffect(() => {
     fetchAppointments();
@@ -35,4 +37,3 @@ export function useAppointments() {
     refetch: fetchAppointments,
   };
 }
-

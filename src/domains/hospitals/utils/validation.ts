@@ -1,7 +1,6 @@
 import {
   validateRequired,
   validateEmail,
-  validatePhone,
   validateNumberRange,
   batchValidate,
 } from "@umituz/react-native-validation";
@@ -37,13 +36,6 @@ export class HospitalValidationService {
       validations.push({
         field: "email",
         validator: () => validateEmail(data.email),
-      });
-    }
-
-    if (data.phone && data.phone.trim().length > 0) {
-      validations.push({
-        field: "phone",
-        validator: () => validatePhone(data.phone),
       });
     }
 

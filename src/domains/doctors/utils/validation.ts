@@ -1,7 +1,6 @@
 import {
   validateRequired,
   validateEmail,
-  validatePhone,
   validateNumberRange,
   validatePositiveNumber,
   batchValidate,
@@ -46,13 +45,6 @@ export class DoctorValidationService {
       validations.push({
         field: "email",
         validator: () => validateEmail(data.email),
-      });
-    }
-
-    if (data.phone && data.phone.trim().length > 0) {
-      validations.push({
-        field: "phone",
-        validator: () => validatePhone(data.phone),
       });
     }
 

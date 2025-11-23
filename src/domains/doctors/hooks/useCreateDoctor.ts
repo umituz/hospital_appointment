@@ -1,20 +1,48 @@
-import { useState, useCallback, useMemo } from "react";
-import { DoctorService } from "../infrastructure/services";
-import { DoctorFormData } from "../types";
+import { useState, useCallback } from "react";
+import { useStorage } from "@umituz/react-native-storage";
+import { DoctorFormData, Doctor } from "../types";
 import { useLocalization } from "@umituz/react-native-localization";
+import { DoctorValidationService } from "../utils/validation";
+
+const STORAGE_KEY = "@hospital_appointment:doctors";
 
 export function useCreateDoctor() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const { t } = useLocalization();
-  const service = useMemo(() => new DoctorService(), []);
+  const { getItem, setItem } = useStorage();
 
   const create = useCallback(
     async (data: DoctorFormData) => {
       try {
         setIsLoading(true);
         setError(null);
-        await service.createDoctor(data, t);
+
+        // Validate data
+        const validation = DoctorValidationService.validateFormData(data, t);
+        if (!validation.isValid) {
+          throw new Error(validation.errors.join(", "));
+        }
+
+        // Get existing doctors
+        const doctors = await getItem<Doctor[]>(STORAGE_KEY, []);
+
+        // Create new doctor
+        const newDoctor: Doctor = {
+          ...data,
+          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+
+        // Save to storage
+        doctors.push(newDoctor);
+        const success = await setItem(STORAGE_KEY, doctors);
+
+        if (!success) {
+          throw new Error("Failed to save doctor");
+        }
+
         return true;
       } catch (err) {
         const error =
@@ -25,7 +53,7 @@ export function useCreateDoctor() {
         setIsLoading(false);
       }
     },
-    [service, t],
+    [t, getItem, setItem],
   );
 
   return {
