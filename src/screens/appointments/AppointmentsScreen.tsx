@@ -1,6 +1,6 @@
-import React, { useLayoutEffect, useCallback } from "react";
+import React, { useLayoutEffect, useEffect } from "react";
 import { View, StyleSheet, Alert, RefreshControl } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { ScreenLayout } from "@umituz/react-native-design-system";
 import { AtomicFab } from "@umituz/react-native-design-system-atoms";
 import { InfiniteScrollList } from "@umituz/react-native-infinite-scroll";
@@ -8,7 +8,6 @@ import { useLocalization } from "@umituz/react-native-localization";
 import {
   useAppointments,
   useAppointmentNavigation,
-  useDeleteAppointment,
 } from "@/domains/appointments";
 import { AppointmentCard } from "@/domains/appointments/presentation/components/AppointmentCard";
 import { EmptyState } from "@/components/common/EmptyState";
@@ -24,52 +23,21 @@ export const AppointmentsScreen: React.FC = () => {
   const { t } = useLocalization();
   const { navigateToCreate, navigateToEdit, navigateToDetail } =
     useAppointmentNavigation();
-  const { appointments, isLoading, refetch } = useAppointments();
-  const { deleteAppointment } = useDeleteAppointment();
+  const { appointments, isLoading, refetch, handleDeleteAppointment } =
+    useAppointments();
+
+  // Refetch appointments when screen comes into focus (after creating/editing)
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => null,
     });
   }, [navigation]);
-
-  const handleDeleteAppointment = useCallback(
-    (id: string) => {
-      Alert.alert(
-        t("general.delete") || "Delete",
-        t("appointments.deleteConfirm") ||
-          "Are you sure you want to delete this appointment?",
-        [
-          {
-            text: t("general.cancel") || "Cancel",
-            style: "cancel",
-          },
-          {
-            text: t("general.delete") || "Delete",
-            style: "destructive",
-            onPress: async () => {
-              const success = await deleteAppointment(id);
-              if (success) {
-                Alert.alert(
-                  t("general.success") || "Success",
-                  t("appointments.messages.deleted") ||
-                    "Appointment deleted successfully",
-                );
-                refetch();
-              } else {
-                Alert.alert(
-                  t("general.error") || "Error",
-                  t("appointments.errors.deleteFailed") ||
-                    "Failed to delete appointment",
-                );
-              }
-            },
-          },
-        ],
-      );
-    },
-    [deleteAppointment, refetch, t],
-  );
 
   const fetchAppointmentsPage = async (
     page: number,
