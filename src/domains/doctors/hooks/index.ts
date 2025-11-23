@@ -10,4 +10,3 @@ export { useDoctorNavigation } from "./useDoctorNavigation";
 export { useEditDoctorForm } from "./useEditDoctorForm";
 export { useDoctorDepartment } from "./useDoctorDepartment";
 export { useDoctorsList } from "./useDoctorsList";
-export { useDoctorsFilters } from "./useDoctorsFilters";

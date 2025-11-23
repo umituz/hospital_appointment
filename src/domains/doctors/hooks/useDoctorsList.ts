@@ -1,33 +1,18 @@
+import { useState } from "react";
 import { useDoctors } from "./useDoctors";
-import { useDepartments } from "@/domains/appointments";
-import { useDoctorsFilters } from "./useDoctorsFilters";
 
 export function useDoctorsList() {
   const { doctors, isLoading, refetch } = useDoctors();
-  const { departments } = useDepartments(undefined);
+  const [query, setQuery] = useState("");
 
-  const {
-    doctors: filteredDoctors,
-    query,
-    setQuery,
-    selectedSpecialty,
-    selectedHospital,
-    specialtyFilterVisible,
-    hospitalFilterVisible,
-    specialtyOptions,
-    hospitalOptions,
-    filterLabels,
-    hasActiveFilter,
-    openSpecialtyFilter,
-    closeSpecialtyFilter,
-    openHospitalFilter,
-    closeHospitalFilter,
-    selectSpecialty: handleSpecialtySelect,
-    selectHospital: handleHospitalSelect,
-    clearSpecialtyFilter: handleClearSpecialty,
-    clearHospitalFilter: handleClearHospital,
-    clearAllFilters: handleClearAllFilters,
-  } = useDoctorsFilters(doctors, departments);
+  // Simple search filter
+  const filteredDoctors = doctors.filter(
+    (doctor) =>
+      query === "" ||
+      doctor.name.toLowerCase().includes(query.toLowerCase()) ||
+      (doctor.specialty &&
+        doctor.specialty.toLowerCase().includes(query.toLowerCase())),
+  );
 
   return {
     doctors: filteredDoctors,
@@ -35,22 +20,5 @@ export function useDoctorsList() {
     refetch,
     query,
     setQuery,
-    selectedSpecialty,
-    selectedHospital,
-    specialtyFilterVisible,
-    hospitalFilterVisible,
-    specialtyOptions,
-    hospitalOptions,
-    filterLabels,
-    hasActiveFilter,
-    openSpecialtyFilter,
-    closeSpecialtyFilter,
-    openHospitalFilter,
-    closeHospitalFilter,
-    handleSpecialtySelect,
-    handleHospitalSelect,
-    handleClearSpecialty,
-    handleClearHospital,
-    handleClearAllFilters,
   };
 }

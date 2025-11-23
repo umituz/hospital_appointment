@@ -1,10 +1,9 @@
-import React, { useLayoutEffect, useMemo } from "react";
+import React from "react";
 import { View, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ScreenLayout } from "@umituz/react-native-design-system";
 import { AtomicFab } from "@umituz/react-native-design-system-atoms";
 import { SearchBar } from "@umituz/react-native-search";
-import { FilterSheet } from "@umituz/react-native-filter";
 import { InfiniteScrollList } from "@umituz/react-native-infinite-scroll";
 import { useLocalization } from "@umituz/react-native-localization";
 import {
@@ -16,11 +15,7 @@ import {
   getDoctorsPage,
   hasMoreDoctors,
 } from "@/domains/doctors/utils/pagination";
-import {
-  DoctorCard,
-  DoctorsListHeader,
-  FilterIndicator,
-} from "@/domains/doctors/presentation/components";
+import { DoctorCard } from "@/domains/doctors/presentation/components";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingState } from "@/components/common/LoadingState";
 import type { Doctor } from "@/domains/doctors/types";
@@ -32,56 +27,9 @@ export const DoctorsScreen: React.FC = () => {
     useDoctorNavigation();
   const { deleteDoctor } = useDeleteDoctor();
 
-  const {
-    doctors,
-    isLoading,
-    refetch,
-    query,
-    setQuery,
-    selectedSpecialty,
-    selectedHospital,
-    specialtyFilterVisible,
-    hospitalFilterVisible,
-    specialtyOptions,
-    hospitalOptions,
-    filterLabels,
-    hasActiveFilter,
-    openSpecialtyFilter,
-    closeSpecialtyFilter,
-    openHospitalFilter,
-    closeHospitalFilter,
-    handleSpecialtySelect,
-    handleHospitalSelect,
-    handleClearSpecialty,
-    handleClearHospital,
-    handleClearAllFilters,
-  } = useDoctorsList();
+  const { doctors, isLoading, refetch, query, setQuery } = useDoctorsList();
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <DoctorsListHeader
-          hasActiveFilter={hasActiveFilter}
-          onSpecialtyPress={openSpecialtyFilter}
-          onHospitalPress={openHospitalFilter}
-          onFilterPress={() => {
-            if (specialtyOptions.length > 0) {
-              openSpecialtyFilter();
-            } else if (hospitalOptions.length > 0) {
-              openHospitalFilter();
-            }
-          }}
-        />
-      ),
-    });
-  }, [
-    navigation,
-    hasActiveFilter,
-    specialtyOptions.length,
-    hospitalOptions.length,
-    openSpecialtyFilter,
-    openHospitalFilter,
-  ]);
+  // No header right component needed - filters removed
 
   const handleDelete = async (doctorId: string) => {
     Alert.alert(
@@ -148,13 +96,6 @@ export const DoctorsScreen: React.FC = () => {
           style={styles.searchBar}
         />
       </View>
-
-      {hasActiveFilter && (
-        <FilterIndicator
-          filterLabels={filterLabels}
-          onClear={handleClearAllFilters}
-        />
-      )}
     </View>
   );
 
@@ -162,7 +103,7 @@ export const DoctorsScreen: React.FC = () => {
     <ScreenLayout scrollable={false}>
       <View style={styles.container}>
         <InfiniteScrollList
-          key={`${selectedSpecialty}-${selectedHospital}-${query}`}
+          key={query}
           config={{
             pageSize: 20,
             threshold: 5,
@@ -194,26 +135,6 @@ export const DoctorsScreen: React.FC = () => {
           variant="primary"
           size="md"
           testID="create-doctor-fab"
-        />
-
-        <FilterSheet
-          visible={specialtyFilterVisible}
-          options={specialtyOptions}
-          selectedIds={selectedSpecialty ? [selectedSpecialty] : []}
-          onFilterPress={handleSpecialtySelect}
-          onClearFilters={handleClearSpecialty}
-          onClose={closeSpecialtyFilter}
-          title={t("doctors.filters.specialization") || "Specialization"}
-        />
-
-        <FilterSheet
-          visible={hospitalFilterVisible}
-          options={hospitalOptions}
-          selectedIds={selectedHospital ? [selectedHospital] : []}
-          onFilterPress={handleHospitalSelect}
-          onClearFilters={handleClearHospital}
-          onClose={closeHospitalFilter}
-          title={t("doctors.filters.hospital") || "Hospital"}
         />
       </View>
     </ScreenLayout>

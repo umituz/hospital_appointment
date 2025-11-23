@@ -4,11 +4,6 @@
     "noResults": "No Doctors Found",
     "noResultsDescription": "We couldn't find any doctors matching your search. Please try adjusting your filters or search terms."
   },
-  "filters": {
-    "specialization": "Specialization",
-    "hospital": "Hospital",
-    "active": "Filtered by"
-  },
   "card": {
     "editProfile": "Edit Profile",
     "showDetails": "Show Details"

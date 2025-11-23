@@ -112,7 +112,6 @@ export const SettingsScreen: React.FC = () => {
       customSections={customSections}
       config={{
         appearance: false,
-        notifications: false,
         about: false,
         legal: false,
       }}
