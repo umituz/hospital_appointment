@@ -7,6 +7,7 @@ import type { CustomSettingsSection } from "@umituz/react-native-settings";
 import {
   SettingItem,
   StorageClearSetting,
+  DisclaimerSetting,
 } from "@umituz/react-native-settings";
 import { Palette, Info, FileText, RotateCcw } from "lucide-react-native";
 import { useLocalization } from "@umituz/react-native-localization";
@@ -69,6 +70,7 @@ export const SettingsScreen: React.FC = () => {
       order: 1,
       content: (
         <>
+          <DisclaimerSetting />
           <SettingItem
             icon={Palette}
             title={t("settings.appearance.title")}

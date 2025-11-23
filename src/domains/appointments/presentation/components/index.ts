@@ -8,4 +8,3 @@ export { DepartmentPickerField } from "./DepartmentPickerField";
 export { DoctorPickerField } from "./DoctorPickerField";
 export { DateTimeFields } from "./DateTimeFields";
 export { PatientFields } from "./PatientFields";
-export { ReminderFields } from "./ReminderFields";
