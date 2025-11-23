@@ -1,14 +1,17 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useAppDesignTokens, STATIC_TOKENS } from '@umituz/react-native-design-system-theme';
-import { AtomicIcon } from '@umituz/react-native-design-system';
-import { useLocalization } from '@umituz/react-native-localization';
-import { SettingsStackNavigator } from '../stacks/SettingsStack';
-import { MainTabParamList } from '@core/navigation/types';
-import { AppointmentsScreen } from '../../../screens/appointments/AppointmentsScreen';
-import { HospitalsScreen } from '../../../screens/hospitals/HospitalsScreen';
-import { DoctorsScreen } from '../../../screens/doctors/DoctorsScreen';
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  useAppDesignTokens,
+  STATIC_TOKENS,
+} from "@umituz/react-native-design-system-theme";
+import { AtomicIcon } from "@umituz/react-native-design-system";
+import { useLocalization } from "@umituz/react-native-localization";
+import { SettingsStackNavigator } from "../stacks/SettingsStack";
+import { MainTabParamList } from "@core/navigation/types";
+import { AppointmentsScreen } from "../../../screens/appointments/AppointmentsScreen";
+import { HospitalsScreen } from "../../../screens/hospitals/HospitalsScreen";
+import { DoctorsScreen } from "../../../screens/doctors/DoctorsScreen";
 
 const MainTabs = createBottomTabNavigator<MainTabParamList>();
 
@@ -18,11 +21,16 @@ export const MainNavigator: React.FC = () => {
 
   const getTabIcon = (routeName: string, focused: boolean): string => {
     switch (routeName) {
-      case 'Appointments': return 'Calendar';
-      case 'Hospitals': return 'Building2';
-      case 'Doctors': return 'User';
-      case 'SettingsStack': return 'Settings';
-      default: return 'Circle';
+      case "Appointments":
+        return "Calendar";
+      case "Hospitals":
+        return "Building2";
+      case "Doctors":
+        return "User";
+      case "SettingsStack":
+        return "Settings";
+      default:
+        return "Circle";
     }
   };
 
@@ -42,7 +50,7 @@ export const MainNavigator: React.FC = () => {
         tabBarInactiveTintColor: tokens.colors.textSecondary,
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: '600',
+          fontWeight: "600",
           marginTop: 12,
           marginBottom: 4,
         },
@@ -70,36 +78,36 @@ export const MainNavigator: React.FC = () => {
         name="Appointments"
         component={AppointmentsScreen}
         options={{
-          title: t('navigation.appointments'),
-          tabBarLabel: t('navigation.appointments'),
-          tabBarTestID: 'appointments-tab',
-        }}
-      />
-      <MainTabs.Screen
-        name="Hospitals"
-        component={HospitalsScreen}
-        options={{
-          title: t('navigation.hospitals'),
-          tabBarLabel: t('navigation.hospitals'),
-          tabBarTestID: 'hospitals-tab',
+          title: t("navigation.appointments"),
+          tabBarLabel: t("navigation.appointments"),
+          tabBarTestID: "appointments-tab",
         }}
       />
       <MainTabs.Screen
         name="Doctors"
         component={DoctorsScreen}
         options={{
-          title: t('navigation.doctors'),
-          tabBarLabel: t('navigation.doctors'),
-          tabBarTestID: 'doctors-tab',
+          title: t("navigation.doctors"),
+          tabBarLabel: t("navigation.doctors"),
+          tabBarTestID: "doctors-tab",
+        }}
+      />
+      <MainTabs.Screen
+        name="Hospitals"
+        component={HospitalsScreen}
+        options={{
+          title: t("navigation.hospitals"),
+          tabBarLabel: t("navigation.hospitals"),
+          tabBarTestID: "hospitals-tab",
         }}
       />
       <MainTabs.Screen
         name="SettingsStack"
         component={SettingsStackNavigator}
         options={{
-          title: t('navigation.settings'),
-          tabBarLabel: t('navigation.settings'),
-          tabBarTestID: 'settings-tab',
+          title: t("navigation.settings"),
+          tabBarLabel: t("navigation.settings"),
+          tabBarTestID: "settings-tab",
         }}
       />
     </MainTabs.Navigator>

@@ -36,9 +36,6 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
   if (onDelete) {
     rightActions.push(createDeleteAction(onDelete));
   }
-  if (onEditProfile) {
-    rightActions.push(createEditAction(onEditProfile));
-  }
 
   const cardContent = (
     <View

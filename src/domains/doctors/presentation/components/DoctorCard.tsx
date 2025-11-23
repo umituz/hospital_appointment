@@ -38,9 +38,6 @@ export const DoctorCard: React.FC<DoctorCardProps> = ({
   if (onDelete) {
     rightActions.push(createDeleteAction(onDelete));
   }
-  if (onEditProfile) {
-    rightActions.push(createEditAction(onEditProfile));
-  }
 
   const cardContent = (
     <View
