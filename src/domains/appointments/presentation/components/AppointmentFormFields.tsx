@@ -28,8 +28,8 @@ interface AppointmentFormFieldsProps {
   onSelectHospital: (hospitalId: string) => void;
   onSelectDepartment: (departmentId: string) => void;
   onSelectDoctor: (doctorId: string) => void;
-  onDateSelect: () => void;
-  onTimeSelect: () => void;
+  onDateChange: (date: Date) => void;
+  onTimeChange: (time: Date) => void;
 }
 
 export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
@@ -47,8 +47,8 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
   onSelectHospital,
   onSelectDepartment,
   onSelectDoctor,
-  onDateSelect,
-  onTimeSelect,
+  onDateChange,
+  onTimeChange,
 }) => {
   return (
     <View style={styles.container}>
@@ -83,8 +83,8 @@ export const AppointmentFormFields: React.FC<AppointmentFormFieldsProps> = ({
       <DateTimeFields
         appointmentDate={formData.appointment_date}
         appointmentTime={formData.appointment_time}
-        onDateSelect={onDateSelect}
-        onTimeSelect={onTimeSelect}
+        onDateChange={onDateChange}
+        onTimeChange={onTimeChange}
       />
 
       <PatientFields

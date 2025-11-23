@@ -1,109 +1,60 @@
 import React from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import {
-  AtomicText,
-  AtomicIcon,
-  useAppDesignTokens,
-} from "@umituz/react-native-design-system";
+import { View, StyleSheet } from "react-native";
+import { AtomicText } from "@umituz/react-native-design-system";
+import { AtomicDatePicker } from "@umituz/react-native-design-system-atoms";
 import { useLocalization } from "@umituz/react-native-localization";
 
 interface DateTimeFieldsProps {
   appointmentDate: string;
   appointmentTime: string;
-  onDateSelect: () => void;
-  onTimeSelect: () => void;
+  onDateChange: (date: Date) => void;
+  onTimeChange: (time: Date) => void;
 }
 
 export const DateTimeFields: React.FC<DateTimeFieldsProps> = ({
   appointmentDate,
   appointmentTime,
-  onDateSelect,
-  onTimeSelect,
+  onDateChange,
+  onTimeChange,
 }) => {
-  const tokens = useAppDesignTokens();
   const { t } = useLocalization();
+
+  // Parse date string to Date object for AtomicDatePicker
+  const parseDateString = (dateString: string): Date | null => {
+    if (!dateString) return null;
+    return new Date(dateString);
+  };
+
+  // Parse time string to Date object for AtomicDatePicker
+  const parseTimeString = (timeString: string): Date | null => {
+    if (!timeString) return null;
+    // Create a date with the time component
+    const [hours, minutes] = timeString.split(":").map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+  };
 
   return (
     <>
-      <View style={styles.input}>
-        <AtomicText
-          type="bodyMedium"
-          color="textSecondary"
-          style={styles.label}
-        >
-          {t("appointments.fields.date")} *
-        </AtomicText>
-        <TouchableOpacity
-          onPress={onDateSelect}
-          style={[
-            styles.pickerButton,
-            {
-              backgroundColor: tokens.colors.surface,
-              borderColor: tokens.colors.border,
-            },
-          ]}
-        >
-          <AtomicIcon name="Calendar" size="md" color="primary" />
-          <AtomicText
-            type="bodyLarge"
-            color={appointmentDate ? "textPrimary" : "textSecondary"}
-            style={styles.pickerText}
-          >
-            {appointmentDate || t("appointments.placeholders.selectDate")}
-          </AtomicText>
-        </TouchableOpacity>
-      </View>
+      <AtomicDatePicker
+        label={`${t("appointments.fields.date")} *`}
+        value={parseDateString(appointmentDate)}
+        onChange={onDateChange}
+        mode="date"
+        placeholder={t("appointments.placeholders.selectDate")}
+        minimumDate={new Date()} // Don't allow past dates
+      />
 
-      <View style={styles.input}>
-        <AtomicText
-          type="bodyMedium"
-          color="textSecondary"
-          style={styles.label}
-        >
-          {t("appointments.fields.time")} *
-        </AtomicText>
-        <TouchableOpacity
-          onPress={onTimeSelect}
-          style={[
-            styles.pickerButton,
-            {
-              backgroundColor: tokens.colors.surface,
-              borderColor: tokens.colors.border,
-            },
-          ]}
-        >
-          <AtomicIcon name="Clock" size="md" color="primary" />
-          <AtomicText
-            type="bodyLarge"
-            color={appointmentTime ? "textPrimary" : "textSecondary"}
-            style={styles.pickerText}
-          >
-            {appointmentTime || t("appointments.placeholders.selectTime")}
-          </AtomicText>
-        </TouchableOpacity>
-      </View>
+      <AtomicDatePicker
+        label={`${t("appointments.fields.time")} *`}
+        value={parseTimeString(appointmentTime)}
+        onChange={onTimeChange}
+        mode="time"
+        placeholder={t("appointments.placeholders.selectTime")}
+      />
     </>
   );
 };
 
-const styles = StyleSheet.create({
-  input: {
-    marginBottom: 20,
-  },
-  label: {
-    marginBottom: 8,
-  },
-  pickerButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    padding: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    marginTop: 8,
-    minHeight: 56,
-  },
-  pickerText: {
-    flex: 1,
-  },
-});
+// Styles are now handled by AtomicDatePicker component

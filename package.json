@@ -59,6 +59,7 @@
     "@umituz/react-native-code-editor": "latest",
     "@umituz/react-native-contacts": "latest",
     "@umituz/react-native-design-system": "latest",
+    "@umituz/react-native-design-system-atoms": "1.8.0",
     "@umituz/react-native-design-system-organisms": "latest",
     "@umituz/react-native-design-system-responsive": "latest",
     "@umituz/react-native-design-system-theme": "latest",
