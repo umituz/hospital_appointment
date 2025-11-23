@@ -2,9 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { DoctorRepository } from "../infrastructure/repositories";
 import { Doctor } from "../types";
 
-export function useDoctorsByDepartment(
-  departmentId: string | number | undefined,
-) {
+export function useDoctorsByDepartment(departmentId?: string) {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);

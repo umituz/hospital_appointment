@@ -46,7 +46,7 @@ export interface AppointmentFormData {
 }
 
 export interface Department {
-  id: string | number;
+  id: string;
   name: string;
-  hospital_id: string | number;
+  hospital_id: string;
 }

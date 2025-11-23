@@ -48,7 +48,7 @@ export class DepartmentRepository {
     return this.getAllFromStorage();
   }
 
-  async getByHospitalId(hospitalId: string | number): Promise<Department[]> {
+  async getByHospitalId(hospitalId: string): Promise<Department[]> {
     const allDepartments = await this.getAllFromStorage();
     const filtered = allDepartments.filter(
       (d) => d.hospital_id.toString() === hospitalId.toString(),
@@ -80,9 +80,7 @@ export class DepartmentRepository {
     return hospitalRepo.getAll();
   }
 
-  private createDepartmentsForHospital(
-    hospitalId: string | number,
-  ): Department[] {
+  private createDepartmentsForHospital(hospitalId: string): Department[] {
     const allDepartmentNames = Object.values(DEPARTMENT_NAMES);
     const timestamp = Date.now();
 

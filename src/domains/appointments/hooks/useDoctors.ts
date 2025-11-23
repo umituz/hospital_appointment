@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { DoctorRepository } from '../../doctors/infrastructure/repositories';
-import { Doctor } from '../../doctors/types';
+import { useState, useEffect } from "react";
+import { DoctorRepository } from "../../doctors/infrastructure/repositories";
+import { Doctor } from "../../doctors/types";
 
-export function useDoctors(departmentId: string | number | undefined) {
+export function useDoctors(departmentId?: string) {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -11,6 +11,7 @@ export function useDoctors(departmentId: string | number | undefined) {
 
   useEffect(() => {
     if (!departmentId) {
+      setDoctors([]);
       setIsLoading(false);
       return;
     }
@@ -22,7 +23,9 @@ export function useDoctors(departmentId: string | number | undefined) {
         const data = await repository.getByDepartmentId(departmentId);
         setDoctors(data);
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to fetch doctors'));
+        setError(
+          err instanceof Error ? err : new Error("Failed to fetch doctors"),
+        );
       } finally {
         setIsLoading(false);
       }
@@ -37,4 +40,3 @@ export function useDoctors(departmentId: string | number | undefined) {
     error,
   };
 }
-

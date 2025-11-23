@@ -43,15 +43,13 @@ export class DoctorRepository {
     }
   }
 
-  async getByDepartmentId(departmentId: string | number): Promise<Doctor[]> {
+  async getByDepartmentId(departmentId: string): Promise<Doctor[]> {
     try {
       if (!departmentId) {
         return [];
       }
       const doctors = await this.getAllFromStorage();
-      return doctors.filter(
-        (d) => d.department_id.toString() === departmentId.toString(),
-      );
+      return doctors.filter((d) => d.department_id === departmentId);
     } catch (error) {
       /* eslint-disable-next-line no-console */
       if (__DEV__)
