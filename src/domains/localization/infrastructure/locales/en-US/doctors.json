@@ -1,16 +1,10 @@
 {
-  "title": "Doctors",
-  "empty": {
-    "title": "No doctors yet",
-    "description": "Click the + button to add your first doctor"
-  },
   "search": {
     "placeholder": "Search by name, specialty...",
     "noResults": "No Doctors Found",
     "noResultsDescription": "We couldn't find any doctors matching your search. Please try adjusting your filters or search terms."
   },
   "filters": {
-    "title": "Filter Doctors",
     "specialization": "Specialization",
     "hospital": "Hospital",
     "active": "Filtered by"
@@ -30,7 +24,6 @@
     "submit": "Update Doctor"
   },
   "detail": {
-    "title": "Doctor Details",
     "information": "Information"
   },
   "messages": {
@@ -44,8 +37,7 @@
     "createFailed": "Failed to create doctor",
     "updateFailed": "Failed to update doctor",
     "deleteFailed": "Failed to delete doctor",
-    "notFound": "Doctor not found",
-    "notFoundDescription": "The doctor you are looking for does not exist"
+    "notFound": "Doctor not found"
   },
   "fields": {
     "name": "Name",

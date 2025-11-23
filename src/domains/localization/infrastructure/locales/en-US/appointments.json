@@ -1,9 +1,5 @@
 {
   "title": "Appointments",
-  "empty": {
-    "title": "No appointments yet",
-    "description": "Click the + button to create your first appointment"
-  },
   "create": {
     "title": "Create Appointment",
     "description": "Fill in the details to schedule a new appointment",
@@ -18,12 +14,6 @@
     "dateInvalid": "Invalid date format",
     "timeInvalid": "Invalid time format"
   },
-  "status": {
-    "scheduled": "Scheduled",
-    "completed": "Completed",
-    "cancelled": "Cancelled",
-    "missed": "Missed"
-  },
   "fields": {
     "hospital": "Hospital",
     "department": "Department",
@@ -35,8 +25,6 @@
     "notes": "Notes"
   },
   "detail": {
-    "title": "Appointment Details",
-    "information": "Appointment Information",
     "info": {
       "title": "Appointment Information"
     }
@@ -61,8 +49,7 @@
     "createFailed": "Failed to schedule appointment",
     "updateFailed": "Failed to update appointment",
     "deleteFailed": "Failed to delete appointment",
-    "notFound": "Appointment not found",
-    "notFoundDescription": "The appointment you are looking for does not exist"
+    "notFound": "Appointment not found"
   },
   "deleteConfirm": "Are you sure you want to delete this appointment?",
   "card": {
