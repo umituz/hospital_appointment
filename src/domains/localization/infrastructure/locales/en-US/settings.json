@@ -27,6 +27,13 @@
     "title": "Reset Onboarding",
     "description": "Show onboarding again",
     "error": "Failed to reset onboarding"
+  },
+  "clearStorage": {
+    "confirmTitle": "Clear All Data",
+    "confirmMessage": "This will permanently delete all your appointments, doctors, hospitals, and settings. This action cannot be undone.",
+    "confirmButton": "Clear All",
+    "successTitle": "Storage Cleared",
+    "successMessage": "All data has been cleared. Please restart the app.",
+    "error": "Failed to clear storage"
   }
 }
-

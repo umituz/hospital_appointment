@@ -1,6 +1,7 @@
-import { useLocalizationStore } from '@umituz/react-native-localization';
-import { useTheme } from '@umituz/react-native-design-system-theme';
-import { useOnboardingStore } from '@umituz/react-native-onboarding';
+import { useLocalizationStore } from "@umituz/react-native-localization";
+import { useTheme } from "@umituz/react-native-design-system-theme";
+import { useOnboardingStore } from "@umituz/react-native-onboarding";
+import { useSettingsStore } from "@umituz/react-native-settings";
 
 /**
  * App Initialization (Offline Mode)
@@ -13,7 +14,7 @@ import { useOnboardingStore } from '@umituz/react-native-onboarding';
  *
  * Performance: Stores initialize in parallel for 3x faster startup
  *
- * NOTE: 
+ * NOTE:
  * - @umituz/react-native-timezone is available via timezoneService
  *   but doesn't require explicit initialization - it auto-detects device timezone
  * - @umituz/react-native-design-system-theme and @umituz/react-native-localization
@@ -25,7 +26,10 @@ export const initializeApp = async () => {
   await Promise.all([
     useTheme.getState().initialize(),
     useLocalizationStore.getState().initialize(),
-    useOnboardingStore.getState().initialize('@hospital_appointment_onboarding_completed'),
+    useOnboardingStore
+      .getState()
+      .initialize("@hospital_appointment_onboarding_completed"),
+    useSettingsStore.getState().loadSettings("offline_user"),
   ]);
 
   return { success: true };
