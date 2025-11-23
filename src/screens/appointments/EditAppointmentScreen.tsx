@@ -42,8 +42,8 @@ export const EditAppointmentScreen: React.FC = () => {
     onSelectHospital,
     onSelectDepartment,
     onSelectDoctor,
-    handleDateSelect,
-    handleTimeSelect,
+    handleDateChange,
+    handleTimeChange,
   } = useEditAppointmentForm(appointmentId);
 
   const { hospitals } = useHospitals();
@@ -131,8 +131,8 @@ export const EditAppointmentScreen: React.FC = () => {
             onSelectHospital={handleSelectHospital}
             onSelectDepartment={handleSelectDepartment}
             onSelectDoctor={onSelectDoctor}
-            onDateSelect={handleDateSelect}
-            onTimeSelect={handleTimeSelect}
+            onDateChange={handleDateChange}
+            onTimeChange={handleTimeChange}
           />
         </AtomicCard>
       </ScrollView>
