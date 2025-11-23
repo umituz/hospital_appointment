@@ -68,7 +68,7 @@ export function useEditAppointmentForm(appointmentId: string | undefined) {
       ]);
     } else if (error) {
       Alert.alert(
-        t("general.error") || "Error",
+        t("general.error"),
         error.message || t("appointments.errors.updateFailed"),
       );
     }

@@ -97,7 +97,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
               color="textSecondary"
               style={styles.date}
             >
-              {t("general.createdAt") || "Created At"}:{" "}
+              {t("general.createdAt")}:{" "}
               {formatDate(new Date(appointment.created_at))}
             </AtomicText>
           )}
@@ -111,7 +111,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
           onPress={onShowDetails || (() => {})}
           style={styles.actionButton}
         >
-          {t("appointments.card.showDetails") || "Show Details"}
+          {t("appointments.card.showDetails")}
         </AtomicButton>
         <AtomicButton
           variant="primary"
@@ -119,7 +119,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({
           onPress={onEdit || (() => {})}
           style={styles.actionButton}
         >
-          {t("appointments.card.edit") || "Edit"}
+          {t("appointments.card.edit")}
         </AtomicButton>
       </View>
     </View>

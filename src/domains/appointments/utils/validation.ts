@@ -23,7 +23,7 @@ export class AppointmentValidationService {
         validator: () =>
           validateRequired(
             formData.hospital_id,
-            t("appointments.fields.hospital") || "Hospital",
+            t("appointments.fields.hospital"),
           ),
       },
       {
@@ -31,23 +31,20 @@ export class AppointmentValidationService {
         validator: () =>
           validateRequired(
             formData.department_id,
-            t("appointments.fields.department") || "Department",
+            t("appointments.fields.department"),
           ),
       },
       {
         field: "doctor_id",
         validator: () =>
-          validateRequired(
-            formData.doctor_id,
-            t("appointments.fields.doctor") || "Doctor",
-          ),
+          validateRequired(formData.doctor_id, t("appointments.fields.doctor")),
       },
       {
         field: "appointment_date",
         validator: () =>
           validateRequired(
             formData.appointment_date,
-            t("appointments.fields.date") || "Date",
+            t("appointments.fields.date"),
           ),
       },
       {
@@ -55,7 +52,7 @@ export class AppointmentValidationService {
         validator: () =>
           validateRequired(
             formData.appointment_time,
-            t("appointments.fields.time") || "Time",
+            t("appointments.fields.time"),
           ),
       },
       {
@@ -63,7 +60,7 @@ export class AppointmentValidationService {
         validator: () =>
           validateName(
             formData.patient_name,
-            t("appointments.fields.patientName") || "Patient Name",
+            t("appointments.fields.patientName"),
           ),
       },
     ];
@@ -83,9 +80,7 @@ export class AppointmentValidationService {
             ? { isValid: true }
             : {
                 isValid: false,
-                error:
-                  t("appointments.validation.dateInvalid") ||
-                  "Invalid date format",
+                error: t("appointments.validation.dateInvalid"),
               },
       });
     }
@@ -98,9 +93,7 @@ export class AppointmentValidationService {
             ? { isValid: true }
             : {
                 isValid: false,
-                error:
-                  t("appointments.validation.timeInvalid") ||
-                  "Invalid time format",
+                error: t("appointments.validation.timeInvalid"),
               },
       });
     }
