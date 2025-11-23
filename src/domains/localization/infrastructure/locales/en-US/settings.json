@@ -11,8 +11,10 @@
   "about": {
     "title": "About",
     "description": "App information and version",
-    "version": "Version",
-    "versionNumber": "1.0.0"
+    "appInfo": "Hospital Appointment",
+    "appVersion": "Version",
+    "versionNumber": "1.0.0",
+    "contact": "Contact Us"
   },
   "disclaimer": {
     "title": "Medical Disclaimer",

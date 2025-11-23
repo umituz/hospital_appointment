@@ -1,15 +1,18 @@
-import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import { useLocalization } from '@umituz/react-native-localization';
-import { STATIC_TOKENS, useAppDesignTokens } from '@umituz/react-native-design-system-theme';
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+import { useLocalization } from "@umituz/react-native-localization";
+import {
+  STATIC_TOKENS,
+  useAppDesignTokens,
+} from "@umituz/react-native-design-system-theme";
 import {
   AppearanceScreen,
   LanguageSelectionScreen,
-} from '@umituz/react-native-settings';
-import { AboutScreen } from '@umituz/react-native-about';
-import { LegalScreen } from '@umituz/react-native-legal';
-import { SettingsScreen } from '@/screens/SettingsScreen';
-import { SettingsStackParamList } from '@core/navigation/types';
+} from "@umituz/react-native-settings";
+import { AboutScreen } from "@/screens/AboutScreen";
+import { LegalScreen } from "@/screens/LegalScreen";
+import { SettingsScreen } from "@/screens/SettingsScreen";
+import { SettingsStackParamList } from "@core/navigation/types";
 
 const SettingsStack = createStackNavigator<SettingsStackParamList>();
 
@@ -35,16 +38,16 @@ export const SettingsStackNavigator: React.FC = () => {
       <SettingsStack.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ title: t('navigation.settings'), headerShown: false }}
+        options={{ title: t("navigation.settings"), headerShown: false }}
       />
       <SettingsStack.Screen
         name="Appearance"
         component={AppearanceScreen}
         options={{
           headerShown: true,
-          headerTitle: t('settings.appearance.title'),
-          headerTitleAlign: 'center',
-          headerBackTitle: t('navigation.settings'),
+          headerTitle: t("settings.appearance.title"),
+          headerTitleAlign: "center",
+          headerBackTitle: t("navigation.settings"),
         }}
       />
       <SettingsStack.Screen
@@ -52,9 +55,9 @@ export const SettingsStackNavigator: React.FC = () => {
         component={LanguageSelectionScreen}
         options={{
           headerShown: true,
-          headerTitle: t('settings.languageSelection.title'),
-          headerTitleAlign: 'center',
-          headerBackTitle: t('navigation.settings'),
+          headerTitle: t("settings.languageSelection.title"),
+          headerTitleAlign: "center",
+          headerBackTitle: t("navigation.settings"),
         }}
       />
       <SettingsStack.Screen
@@ -62,9 +65,9 @@ export const SettingsStackNavigator: React.FC = () => {
         component={AboutScreen}
         options={{
           headerShown: true,
-          headerTitle: t('settings.about.title'),
-          headerTitleAlign: 'center',
-          headerBackTitle: t('navigation.settings'),
+          headerTitle: t("settings.about.title"),
+          headerTitleAlign: "center",
+          headerBackTitle: t("navigation.settings"),
         }}
       />
       <SettingsStack.Screen
@@ -72,9 +75,9 @@ export const SettingsStackNavigator: React.FC = () => {
         component={LegalScreen}
         options={{
           headerShown: true,
-          headerTitle: t('settings.legal.title'),
-          headerTitleAlign: 'center',
-          headerBackTitle: t('navigation.settings'),
+          headerTitle: t("settings.legal.title"),
+          headerTitleAlign: "center",
+          headerBackTitle: t("navigation.settings"),
         }}
       />
     </SettingsStack.Navigator>

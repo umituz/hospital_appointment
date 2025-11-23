@@ -36,7 +36,10 @@
   },
   "detail": {
     "title": "Appointment Details",
-    "information": "Appointment Information"
+    "information": "Appointment Information",
+    "info": {
+      "title": "Appointment Information"
+    }
   },
   "placeholders": {
     "selectHospital": "Select Hospital",
